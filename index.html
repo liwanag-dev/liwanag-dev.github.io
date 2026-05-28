@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>實用視聽華語 1 · PAVC Study App</title>
 <style>
+@font-face {
+  font-family: 'BiauKai';
+  src: url('BiauKai.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   --bg: #faf9f6; --surface: #fff; --border: #e8e4dc;
   --text: #1a1816; --muted: #7a7570; --accent: #b5793a;
@@ -60,28 +66,32 @@ body { font-family: 'Georgia', 'Noto Serif TC', serif; background: var(--bg); co
 .speaker-b .speaker-zh { color: var(--blue); }
 .line-content { flex: 1; }
 .line-zh { font-size: 20px; line-height: 1.5; margin-bottom: 3px; }
-.line-py { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 2px; }
+.line-py { font-size: 13px; color: var(--muted); font-family: 'Noto Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-style: italic; margin-bottom: 2px; }
 .line-en { font-size: 13px; color: #888; }
+/* Pinyin font — needs a font with proper precomposed tone mark glyphs */
+.py { font-family: 'Noto Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-style: italic; }
+/* Vocab Chinese — BiauKai / DFKai-SB */
+.zh-kai { font-family: 'BiauKai', 'DFKai-SB', '標楷體', 'KaiTi', serif; }
 /* Vocab */
 .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
 .vocab-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all .2s; position: relative; }
 .vocab-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
 .vocab-card .v-num { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-family: monospace; }
-.vocab-card .v-zh { font-size: 24px; margin-bottom: 4px; }
-.vocab-card .v-py { font-size: 12px; color: var(--accent-dark); font-style: italic; margin-bottom: 2px; }
+.vocab-card .v-zh { font-size: 24px; margin-bottom: 4px; font-family: 'BiauKai', 'DFKai-SB', '標楷體', 'KaiTi', serif; }
+.vocab-card .v-py { font-size: 12px; color: var(--accent-dark); margin-bottom: 2px; font-family: 'Noto Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-style: italic; }
 .vocab-card .v-pos { font-size: 10px; color: var(--muted); background: var(--bg); border-radius: 4px; padding: 1px 5px; display: inline-block; margin-bottom: 4px; }
 .vocab-card .v-en { font-size: 13px; color: var(--text); font-family: Georgia, serif; }
 .vocab-card.flipped { background: var(--accent-light); }
-.vocab-card .v-ex { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.5; }
+.vocab-card .v-ex { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.5; font-family: 'BiauKai', 'DFKai-SB', '標楷體', serif; }
 /* Flashcard */
 .flashcard-wrap { max-width: 480px; margin: 0 auto; }
 .flashcard { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 30px; text-align: center; cursor: pointer; min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background .2s; box-shadow: var(--shadow); }
 .flashcard:hover { border-color: var(--accent); }
-.flashcard .fc-zh { font-size: 56px; line-height: 1.2; margin-bottom: 12px; }
-.flashcard .fc-py { font-size: 18px; color: var(--accent-dark); font-style: italic; margin-bottom: 8px; }
+.flashcard .fc-zh { font-size: 56px; line-height: 1.2; margin-bottom: 12px; font-family: 'BiauKai', 'DFKai-SB', '標楷體', 'KaiTi', serif; }
+.flashcard .fc-py { font-size: 18px; color: var(--accent-dark); margin-bottom: 8px; font-family: 'Noto Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-style: italic; }
 .flashcard .fc-pos { font-size: 12px; color: var(--muted); background: var(--bg); border-radius: 4px; padding: 2px 8px; margin-bottom: 10px; display: inline-block; }
 .flashcard .fc-en { font-size: 18px; font-weight: 600; margin-bottom: 14px; }
-.flashcard .fc-ex { font-size: 14px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 14px; width: 100%; text-align: center; }
+.flashcard .fc-ex { font-size: 15px; color: var(--muted); line-height: 1.7; border-top: 1px solid var(--border); padding-top: 14px; width: 100%; text-align: center; font-family: 'BiauKai', 'DFKai-SB', '標楷體', serif; }
 .flashcard .hint { font-size: 12px; color: var(--muted); margin-top: 14px; }
 .fc-nav { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 18px; }
 .fc-nav-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 20px; cursor: pointer; font-size: 14px; transition: all .15s; font-family: inherit; }
@@ -779,7 +789,7 @@ let dialoguePart = 0;
 let displayModes = {zh:true,py:true,en:true};
 let vocabIdx = 0;
 let vocabFlipped = false;
-let vocabMode = 'card'; // 'card' or 'flash'
+let vocabMode = 'flash'; // 'flash' or 'grid'
 let quiz = null;
 let quizIdx = 0;
 let quizScore = 0;
@@ -919,11 +929,40 @@ function renderDialogue(b,l){
 
 function renderVocab(b,l){
   const v = l.vocab[vocabIdx];
-  const flash = `<div class="flashcard-wrap">
+
+  if(vocabMode === 'grid'){
+    // --- Grid view ---
+    b.innerHTML = `<div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <p class="section-title" style="margin:0">All ${l.vocab.length} Words — click any card to expand</p>
+        <div style="display:flex;gap:8px">
+          <button class="btn-ghost" onclick="setVocabMode('flash')">← Flashcards</button>
+          <button class="btn" onclick="startQuiz()">Quiz ↗</button>
+        </div>
+      </div>
+      <div class="vocab-grid">
+        ${l.vocab.map((v,i)=>{
+          const open = vocabIdx===i&&vocabFlipped;
+          return `<div class="vocab-card ${open?'flipped':''}" onclick="selectVocab(${i})">
+            <div class="v-num">${v.n}</div>
+            <div class="v-zh">${v.zh}</div>
+            <div class="v-py">${v.py}</div>
+            <span class="v-pos">${v.pos}</span>
+            <div class="v-en">${v.en}</div>
+            ${open&&v.ex?`<div class="v-ex">${v.ex}<br><span style="font-family:Georgia,serif;font-style:italic;color:var(--muted)">${v.exEn}</span></div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+    return;
+  }
+
+  // --- Flashcard view ---
+  b.innerHTML = `<div class="flashcard-wrap">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span style="font-size:13px;color:var(--muted)">${vocabIdx+1} / ${l.vocab.length} words</span>
       <div style="display:flex;gap:8px">
-        <button class="btn-ghost" onclick="setVocabMode('card')">Grid</button>
+        <button class="btn-ghost" onclick="setVocabMode('grid')">Grid view</button>
         <button class="btn" onclick="startQuiz()">Quiz ↗</button>
       </div>
     </div>
@@ -936,7 +975,7 @@ function renderVocab(b,l){
         <div class="fc-py">${v.py}</div>
         <span class="fc-pos">${v.pos}</span>
         <div class="fc-en">${v.en}</div>
-        ${v.ex?`<div class="fc-ex"><div style="font-size:17px;margin-bottom:3px">${v.ex}</div><div style="font-size:12px;color:var(--muted);font-style:italic">${v.exEn}</div></div>`:''}
+        ${v.ex?`<div class="fc-ex"><div style="margin-bottom:3px">${v.ex}</div><div style="font-family:Georgia,serif;font-size:12px;color:var(--muted);font-style:italic">${v.exEn}</div></div>`:''}
       `}
     </div>
     <div class="fc-nav">
@@ -945,25 +984,6 @@ function renderVocab(b,l){
       <button class="fc-nav-btn" onclick="nextCard()" ${vocabIdx===l.vocab.length-1?'disabled':''}>Next →</button>
     </div>
   </div>`;
-
-  const grid = `<div style="margin-top:24px">
-    <p class="section-title" style="margin-bottom:12px">All ${l.vocab.length} Words — Click to Expand</p>
-    <div class="vocab-grid">
-      ${l.vocab.map((v,i)=>{
-        const open = vocabIdx===i&&vocabFlipped;
-        return `<div class="vocab-card ${open?'flipped':''}" onclick="selectVocab(${i})">
-          <div class="v-num">${v.n}</div>
-          <div class="v-zh">${v.zh}</div>
-          <div class="v-py">${v.py}</div>
-          <span class="v-pos">${v.pos}</span>
-          <div class="v-en">${v.en}</div>
-          ${open&&v.ex?`<div class="v-ex">${v.ex}<br><span style="font-style:italic;color:var(--muted)">${v.exEn}</span></div>`:''}
-        </div>`;
-      }).join('')}
-    </div>
-  </div>`;
-
-  b.innerHTML = flash + grid;
 }
 
 function renderGrammar(b,l){
@@ -1038,7 +1058,7 @@ function render(){
 
 // --- Actions ---
 function goHome(){ currentLesson=0; currentTab='home'; render(); }
-function openLesson(id){ currentLesson=id; currentTab='dialogue'; dialoguePart=0; vocabIdx=0; vocabFlipped=false; quiz=null; quizDone=false; render(); }
+function openLesson(id){ currentLesson=id; currentTab='dialogue'; dialoguePart=0; vocabIdx=0; vocabFlipped=false; vocabMode='flash'; quiz=null; quizDone=false; render(); }
 function setTab(t){ currentTab=t; vocabMode='flash'; vocabIdx=0; vocabFlipped=false; render(); }
 function setDialoguePart(i){ dialoguePart=i; render(); }
 function toggleMode(m){ displayModes[m]=!displayModes[m]; renderBody(); }
@@ -1046,7 +1066,7 @@ function flipCard(){ vocabFlipped=!vocabFlipped; renderBody(); }
 function prevCard(){ if(vocabIdx>0){vocabIdx--;vocabFlipped=false;renderBody();} }
 function nextCard(){ const l=LESSONS.find(x=>x.id===currentLesson); if(vocabIdx<l.vocab.length-1){vocabIdx++;vocabFlipped=false;renderBody();} }
 function selectVocab(i){ if(vocabIdx===i){vocabFlipped=!vocabFlipped;}else{vocabIdx=i;vocabFlipped=true;} renderBody(); }
-function setVocabMode(m){ vocabMode=m; renderBody(); }
+function setVocabMode(m){ vocabMode=m; vocabFlipped=false; renderBody(); }
 function startQuiz(){ currentTab='quiz'; initQuiz(); render(); }
 function initQuiz(){
   const l=LESSONS.find(x=>x.id===currentLesson);
