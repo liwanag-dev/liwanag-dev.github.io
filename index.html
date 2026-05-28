@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>實用視聽華語 1 · PAVC Study App</title>
+<style>
+:root {
+  --bg: #faf9f6; --surface: #fff; --border: #e8e4dc;
+  --text: #1a1816; --muted: #7a7570; --accent: #b5793a;
+  --accent-light: #f5edd9; --accent-dark: #8a5a28;
+  --green: #2d6a4f; --green-light: #d8f3e3;
+  --red: #c0392b; --red-light: #fde8e6;
+  --blue: #1a5276; --blue-light: #d6eaf8;
+  --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Georgia', 'Noto Serif TC', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+/* Sidebar */
+.sidebar { width: 240px; min-width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar-header { padding: 18px 16px 12px; border-bottom: 1px solid var(--border); }
+.sidebar-header h1 { font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--accent-dark); text-transform: uppercase; }
+.sidebar-header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.lesson-list { flex: 1; padding: 8px 0; }
+.lesson-btn { width: 100%; background: none; border: none; text-align: left; padding: 10px 16px; cursor: pointer; transition: background .15s; display: flex; align-items: flex-start; gap: 10px; }
+.lesson-btn:hover { background: var(--accent-light); }
+.lesson-btn.active { background: var(--accent-light); border-right: 3px solid var(--accent); }
+.lesson-num { font-size: 11px; color: var(--muted); min-width: 28px; padding-top: 2px; font-family: monospace; }
+.lesson-info { flex: 1; }
+.lesson-zh { font-size: 14px; color: var(--text); line-height: 1.3; }
+.lesson-en { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.progress-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+/* Main */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.main-header { padding: 20px 28px 0; border-bottom: 1px solid var(--border); }
+.lesson-title-area { margin-bottom: 12px; }
+.lesson-title-area .num { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.lesson-title-area h2 { font-size: 26px; margin: 4px 0 2px; }
+.lesson-title-area .en { font-size: 14px; color: var(--muted); }
+.tabs { display: flex; gap: 0; border-bottom: none; }
+.tab { background: none; border: none; padding: 10px 18px; font-size: 13px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; font-family: inherit; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab:hover:not(.active) { color: var(--text); }
+.main-body { padding: 24px 28px; flex: 1; }
+/* Display toggles */
+.display-bar { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+.display-bar span { font-size: 12px; color: var(--muted); }
+.toggle-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--muted); transition: all .15s; font-family: inherit; }
+.toggle-btn.on { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+/* Dialogue */
+.dialogue-part-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.part-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--muted); transition: all .15s; font-family: inherit; }
+.part-btn.active { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
+.dialogue-line { display: flex; gap: 14px; padding: 14px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); margin-bottom: 8px; }
+.speaker-col { min-width: 80px; padding-top: 2px; }
+.speaker-zh { font-size: 14px; font-weight: 600; }
+.speaker-en { font-size: 11px; color: var(--muted); }
+.speaker-a .speaker-zh { color: var(--accent-dark); }
+.speaker-b .speaker-zh { color: var(--blue); }
+.line-content { flex: 1; }
+.line-zh { font-size: 20px; line-height: 1.5; margin-bottom: 3px; }
+.line-py { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 2px; }
+.line-en { font-size: 13px; color: #888; }
+/* Vocab */
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.vocab-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all .2s; position: relative; }
+.vocab-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.vocab-card .v-num { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-family: monospace; }
+.vocab-card .v-zh { font-size: 24px; margin-bottom: 4px; }
+.vocab-card .v-py { font-size: 12px; color: var(--accent-dark); font-style: italic; margin-bottom: 2px; }
+.vocab-card .v-pos { font-size: 10px; color: var(--muted); background: var(--bg); border-radius: 4px; padding: 1px 5px; display: inline-block; margin-bottom: 4px; }
+.vocab-card .v-en { font-size: 13px; color: var(--text); font-family: Georgia, serif; }
+.vocab-card.flipped { background: var(--accent-light); }
+.vocab-card .v-ex { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); line-height: 1.5; }
+/* Flashcard */
+.flashcard-wrap { max-width: 480px; margin: 0 auto; }
+.flashcard { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 30px; text-align: center; cursor: pointer; min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background .2s; box-shadow: var(--shadow); }
+.flashcard:hover { border-color: var(--accent); }
+.flashcard .fc-zh { font-size: 56px; line-height: 1.2; margin-bottom: 12px; }
+.flashcard .fc-py { font-size: 18px; color: var(--accent-dark); font-style: italic; margin-bottom: 8px; }
+.flashcard .fc-pos { font-size: 12px; color: var(--muted); background: var(--bg); border-radius: 4px; padding: 2px 8px; margin-bottom: 10px; display: inline-block; }
+.flashcard .fc-en { font-size: 18px; font-weight: 600; margin-bottom: 14px; }
+.flashcard .fc-ex { font-size: 14px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 14px; width: 100%; text-align: center; }
+.flashcard .hint { font-size: 12px; color: var(--muted); margin-top: 14px; }
+.fc-nav { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 18px; }
+.fc-nav-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 20px; cursor: pointer; font-size: 14px; transition: all .15s; font-family: inherit; }
+.fc-nav-btn:hover:not(:disabled) { background: var(--accent-light); border-color: var(--accent); }
+.fc-nav-btn:disabled { opacity: .35; cursor: default; }
+.fc-counter { font-size: 13px; color: var(--muted); min-width: 60px; text-align: center; }
+/* Quiz */
+.quiz-wrap { max-width: 520px; }
+.quiz-q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 20px; box-shadow: var(--shadow); }
+.quiz-q-card .q-zh { font-size: 52px; margin-bottom: 8px; }
+.quiz-q-card .q-py { font-size: 16px; color: var(--muted); font-style: italic; }
+.quiz-opt { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; text-align: left; cursor: pointer; font-size: 14px; margin-bottom: 8px; transition: all .15s; font-family: inherit; color: var(--text); }
+.quiz-opt:hover:not(:disabled) { background: var(--accent-light); border-color: var(--accent); }
+.quiz-opt.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
+.quiz-opt.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-meta { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
+.quiz-score { color: var(--accent-dark); font-weight: 600; }
+.quiz-done { text-align: center; padding: 40px 20px; }
+.quiz-done .score-big { font-size: 52px; font-weight: 700; color: var(--accent-dark); }
+.quiz-done .score-label { font-size: 16px; color: var(--muted); margin-bottom: 24px; }
+.quiz-done .emoji { font-size: 44px; margin-bottom: 12px; }
+/* Grammar */
+.grammar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px; }
+.grammar-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.grammar-section p { font-size: 14px; color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
+.grammar-pattern { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
+.grammar-pattern .pat { font-size: 17px; margin-bottom: 3px; }
+.grammar-pattern .pat-en { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 4px; }
+.grammar-pattern .pat-ex { font-size: 14px; color: var(--accent-dark); }
+/* Buttons */
+.btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px 22px; cursor: pointer; font-size: 14px; font-family: inherit; transition: background .15s; }
+.btn:hover { background: var(--accent-dark); }
+.btn-ghost { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 8px 18px; cursor: pointer; font-size: 13px; font-family: inherit; color: var(--text); transition: all .15s; }
+.btn-ghost:hover { background: var(--accent-light); border-color: var(--accent); }
+/* Progress */
+.progress-bar-wrap { background: var(--border); border-radius: 4px; height: 4px; margin-top: 4px; }
+.progress-bar { background: var(--accent); height: 4px; border-radius: 4px; transition: width .3s; }
+/* Notes */
+.note-box { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; color: var(--blue); }
+/* Home */
+.home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.home-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: all .2s; }
+.home-card:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.home-card .hc-num { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-family: monospace; }
+.home-card .hc-zh { font-size: 18px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+.home-card .hc-en { font-size: 11px; color: var(--muted); }
+.home-card .hc-bar { margin-top: 10px; }
+.section-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+/* Responsive */
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .app { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main">
+    <div class="main-header" id="mainHeader"></div>
+    <div class="main-body" id="mainBody"></div>
+  </div>
+</div>
+
+<script>
+const LESSONS = [
+  {
+    id:1, zh:"您貴姓？", en:"What Is Your Name?",
+    dialogues:[
+      {part:"I", speakers:["李先生","王先生"], lines:[
+        {s:0,zh:"先生，您貴姓？",py:"Xiānshēng, nín guìxìng?",en:"Sir, may I know your family name?"},
+        {s:1,zh:"我姓王，您貴姓？",py:"Wǒ xìng Wáng. Nín guìxìng?",en:"My last name is Wang. And you?"},
+        {s:0,zh:"我姓李，叫大衛。",py:"Wǒ xìng Lǐ, jiào Dàwèi.",en:"My last name is Li, my first name is David."},
+        {s:1,zh:"李先生，您好。",py:"Lǐ Xiānshēng, nín hǎo.",en:"Hello, Mr. Li."},
+        {s:0,zh:"您好。您是美國人嗎？",py:"Nín hǎo. Nín shì Měiguó rén ma?",en:"Hello. Are you American?"},
+        {s:1,zh:"不是，我是英國人。",py:"Búshì, wǒ shì Yīngguó rén.",en:"I am not American. I am British."},
+      ]},
+      {part:"II", speakers:["李愛美","王珍妮"], lines:[
+        {s:0,zh:"你好。",py:"Nǐ hǎo.",en:"Hello."},
+        {s:1,zh:"你好。",py:"Nǐ hǎo.",en:"Hello."},
+        {s:0,zh:"我叫李愛美。你叫什麼名字？",py:"Wǒ jiào Lǐ Àiměi. Nǐ jiào shénme míngzi?",en:"My name is Amy Li. What is your name?"},
+        {s:1,zh:"我叫王珍妮。",py:"Wǒ jiào Wáng Zhēnní.",en:"My name is Jenny Wang."},
+        {s:0,zh:"珍妮，你是哪國人？",py:"Zhēnní, nǐ shì něiguó rén?",en:"Jenny, where are you from?"},
+        {s:1,zh:"我是美國人，你呢？",py:"Wǒ shì Měiguó rén, nǐ ne?",en:"I am American, and you?"},
+        {s:0,zh:"我是臺灣人。",py:"Wǒ shì Táiwān rén.",en:"I am Taiwanese."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"您",py:"nín",pos:"PN",en:"you (formal/respectful)",ex:"您好！",exEn:"Hello! (formal)"},
+      {n:2,zh:"貴姓",py:"guìxìng",pos:"IE",en:"May I know your last name?",ex:"您貴姓？",exEn:"May I know your last name?"},
+      {n:3,zh:"姓",py:"xìng",pos:"V/N",en:"surname; to be surnamed",ex:"他姓王嗎？",exEn:"Is his last name Wang?"},
+      {n:4,zh:"先生",py:"xiānshēng",pos:"N",en:"Mr., Sir, gentleman",ex:"李先生好！",exEn:"Hello, Mr. Li!"},
+      {n:5,zh:"王",py:"Wáng",pos:"N",en:"Wang (common surname)",ex:"",exEn:""},
+      {n:6,zh:"我",py:"wǒ",pos:"PN",en:"I, me",ex:"我是臺灣人。",exEn:"I am Taiwanese."},
+      {n:7,zh:"叫",py:"jiào",pos:"V",en:"to be called, to call",ex:"你叫什麼名字？",exEn:"What is your name?"},
+      {n:8,zh:"好",py:"hǎo",pos:"SV",en:"good; well; fine",ex:"您好！",exEn:"Hello!"},
+      {n:9,zh:"是",py:"shì",pos:"V",en:"to be (am/is/are)",ex:"我是美國人。",exEn:"I am American."},
+      {n:10,zh:"美國",py:"Měiguó",pos:"N",en:"United States, America",ex:"她是美國人。",exEn:"She is American."},
+      {n:11,zh:"人",py:"rén",pos:"N",en:"person, people",ex:"他是中國人。",exEn:"He is Chinese."},
+      {n:12,zh:"嗎",py:"ma",pos:"P",en:"yes/no question particle",ex:"你是日本人嗎？",exEn:"Are you Japanese?"},
+      {n:13,zh:"不是",py:"búshì",pos:"V",en:"am/is/are not",ex:"不是，我是英國人。",exEn:"No, I am British."},
+      {n:14,zh:"英國",py:"Yīngguó",pos:"N",en:"United Kingdom, Britain",ex:"他是英國人。",exEn:"He is British."},
+      {n:15,zh:"你",py:"nǐ",pos:"PN",en:"you (informal)",ex:"你好！",exEn:"Hello!"},
+      {n:16,zh:"什麼",py:"shénme",pos:"QW",en:"what",ex:"這是什麼？",exEn:"What is this?"},
+      {n:17,zh:"名字",py:"míngzi",pos:"N",en:"name (full name)",ex:"你叫什麼名字？",exEn:"What is your name?"},
+      {n:18,zh:"哪",py:"něi/nǎ",pos:"QW",en:"which",ex:"你是哪國人？",exEn:"Which country are you from?"},
+      {n:19,zh:"呢",py:"ne",pos:"P",en:"and you? / what about?",ex:"我是臺灣人，你呢？",exEn:"I'm Taiwanese, and you?"},
+      {n:20,zh:"李",py:"Lǐ",pos:"N",en:"Li (common surname)",ex:"",exEn:""},
+      {n:21,zh:"她",py:"tā",pos:"PN",en:"she, her",ex:"她叫珍妮。",exEn:"Her name is Jenny."},
+      {n:22,zh:"誰",py:"shéi",pos:"QW",en:"who, whom",ex:"誰是王先生？",exEn:"Who is Mr. Wang?"},
+      {n:23,zh:"中國",py:"Zhōngguó",pos:"N",en:"China, Chinese",ex:"他是中國人。",exEn:"He is Chinese."},
+      {n:24,zh:"華人",py:"Huárén",pos:"N",en:"ethnic Chinese person",ex:"",exEn:""},
+    ],
+    grammar:[
+      {title:"Verbs 姓, 叫, 是 for introductions",exp:"姓 is followed by surname only. 叫 is used with full or given name. With titles like 先生/小姐, only 是 can be used.",patterns:[
+        {pat:"我 姓 ___。",en:"My surname is ___.",ex:"我姓王。"},
+        {pat:"我 叫 ___。",en:"My name is ___.",ex:"我叫大衛。"},
+        {pat:"我 是 ___ 人。",en:"I am ___ (nationality).",ex:"我是臺灣人。"},
+      ]},
+      {title:"Yes/No questions with 嗎",exp:"Add 嗎 to the end of any statement to form a yes/no question.",patterns:[
+        {pat:"你是 ___ 嗎？",en:"Are you ___?",ex:"你是美國人嗎？"},
+      ]},
+      {title:"Follow-up questions with 呢",exp:"呢 after a short phrase means 'And ___?' or 'What about ___?'",patterns:[
+        {pat:"___, 你呢？",en:"___, and you?",ex:"我是美國人，你呢？"},
+      ]},
+    ],
+    notes:["In Taiwan Mandarin, 您 is the polite/formal form of 你. Use it with teachers, elders, and strangers.","The textbook uses two Romanization systems: Taiwan Pinyin (Tongyong) and standard Hanyu Pinyin. Both are shown."],
+  },
+  {
+    id:2, zh:"早，您好", en:"Hello, Good Morning",
+    dialogues:[
+      {part:"I", speakers:["趙小姐","張先生","張太太"], lines:[
+        {s:0,zh:"張先生，您早。",py:"Zhāng Xiānshēng, nín zǎo.",en:"Good morning, Mr. Zhang."},
+        {s:1,zh:"早，趙小姐，好久不見，你好啊？",py:"Zǎo, Zhào Xiǎojiě, hǎojiǔ bújiàn, nǐ hǎo a?",en:"Good morning, Miss Zhao, long time no see, how are you?"},
+        {s:0,zh:"很好，謝謝。您好嗎？",py:"Hěn hǎo, xièxiè. Nín hǎo ma?",en:"Very well, thank you. How are you?"},
+        {s:1,zh:"我也很好。這是我太太。淑芳，這是趙小姐。",py:"Wǒ yě hěn hǎo. Zhè shì wǒ tàitai. Shūfāng, zhè shì Zhào Xiǎojiě.",en:"I'm very well too. This is my wife. Shufang, this is Miss Zhao."},
+        {s:0,zh:"張太太，您好。",py:"Zhāng Tàitai, nín hǎo.",en:"Hello, Mrs. Zhang."},
+        {s:2,zh:"您好，趙小姐。",py:"Nín hǎo, Zhào Xiǎojiě.",en:"Hello, Miss Zhao."},
+      ]},
+      {part:"II", speakers:["李愛美","王珍妮"], lines:[
+        {s:0,zh:"珍妮，你好啊！",py:"Zhēnní, nǐ hǎo a!",en:"Jenny, hello!"},
+        {s:1,zh:"你好，愛美。",py:"Nǐ hǎo, Àiměi.",en:"Hello, Aimei."},
+        {s:0,zh:"天氣好熱啊！你去上課嗎？",py:"Tiānqì hǎo rè a! Nǐ qù shàngkè ma?",en:"The weather is so hot! Are you going to class?"},
+        {s:1,zh:"是啊！",py:"Shì a!",en:"Yes!"},
+        {s:0,zh:"你們很忙嗎？",py:"Nǐmen hěn máng ma?",en:"Are you all very busy?"},
+        {s:1,zh:"很忙。你呢？忙不忙？",py:"Hěn máng. Nǐ ne? Máng bù máng?",en:"Very busy. And you? Are you busy?"},
+        {s:0,zh:"我不太忙。",py:"Wǒ bú tài máng.",en:"I'm not too busy."},
+        {s:1,zh:"再見。",py:"Zàijiàn.",en:"Goodbye."},
+        {s:0,zh:"再見。",py:"Zàijiàn.",en:"Goodbye."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"早",py:"zǎo",pos:"IE/SV",en:"good morning; early",ex:"李先生，早。",exEn:"Good morning, Mr. Li."},
+      {n:2,zh:"趙",py:"Zhào",pos:"N",en:"Zhao (common surname)",ex:"",exEn:""},
+      {n:3,zh:"小姐",py:"xiǎojiě",pos:"N",en:"Miss, young woman",ex:"趙小姐，您好。",exEn:"Hello, Miss Zhao."},
+      {n:4,zh:"好久不見",py:"hǎojiǔ bújiàn",pos:"IE",en:"long time no see",ex:"好久不見，你好啊？",exEn:"Long time no see, how are you?"},
+      {n:5,zh:"很",py:"hěn",pos:"A",en:"very",ex:"我很好。",exEn:"I am very well."},
+      {n:6,zh:"謝謝",py:"xièxiè",pos:"IE",en:"thank you",ex:"謝謝你。",exEn:"Thank you."},
+      {n:7,zh:"也",py:"yě",pos:"A",en:"also, too",ex:"我也很好。",exEn:"I am also very well."},
+      {n:8,zh:"這",py:"zhè/zhèi",pos:"DEM",en:"this",ex:"這是什麼？",exEn:"What is this?"},
+      {n:9,zh:"太太",py:"tàitai",pos:"N",en:"Mrs., wife",ex:"張太太，您好。",exEn:"Hello, Mrs. Zhang."},
+      {n:10,zh:"天氣",py:"tiānqì",pos:"N",en:"weather",ex:"天氣很好。",exEn:"The weather is nice."},
+      {n:11,zh:"熱",py:"rè",pos:"SV",en:"to be hot",ex:"今天很熱。",exEn:"Today is very hot."},
+      {n:12,zh:"去",py:"qù",pos:"V",en:"to go",ex:"你去哪裡？",exEn:"Where are you going?"},
+      {n:13,zh:"上課",py:"shàngkè",pos:"VO",en:"to go to class, attend class",ex:"我去上課。",exEn:"I'm going to class."},
+      {n:14,zh:"啊",py:"a",pos:"P",en:"sentence particle (surprise/exclamation)",ex:"是啊！",exEn:"Yes!"},
+      {n:15,zh:"忙",py:"máng",pos:"SV",en:"to be busy",ex:"你忙不忙？",exEn:"Are you busy?"},
+      {n:16,zh:"你們",py:"nǐmen",pos:"PN",en:"you (plural)",ex:"你們好嗎？",exEn:"How are you all?"},
+      {n:17,zh:"不太",py:"bú tài",pos:"A",en:"not too, not very",ex:"我不太忙。",exEn:"I'm not too busy."},
+      {n:18,zh:"再見",py:"zàijiàn",pos:"IE",en:"goodbye",ex:"再見！",exEn:"Goodbye!"},
+      {n:19,zh:"冷",py:"lěng",pos:"SV",en:"to be cold",ex:"今天冷不冷？",exEn:"Is it cold today?"},
+      {n:20,zh:"累",py:"lèi",pos:"SV",en:"to be tired",ex:"你累嗎？",exEn:"Are you tired?"},
+    ],
+    grammar:[
+      {title:"Stative verbs (SV) — describing states",exp:"In Chinese, adjectives act as verbs. They do not need 是 (to be). 很 is commonly used before SVs, but does not always mean 'very'.",patterns:[
+        {pat:"我 很 忙。",en:"I am (very) busy.",ex:"我不太忙。I'm not too busy."},
+        {pat:"天氣 很 熱。",en:"The weather is (very) hot.",ex:"天氣不冷。It's not cold."},
+      ]},
+      {title:"Verb-not-Verb questions",exp:"Repeat the verb with 不 in between to form a choice question (yes or no).",patterns:[
+        {pat:"你 忙 不 忙？",en:"Are you busy (or not)?",ex:"你熱不熱？Are you hot?"},
+        {pat:"你 冷 不 冷？",en:"Are you cold (or not)?",ex:""},
+      ]},
+      {title:"也 — also, too",exp:"也 connects two similar statements. It always comes before the verb.",patterns:[
+        {pat:"A 很 忙，B 也 很 忙。",en:"A is busy, and B is too.",ex:"我也很好。I'm also very well."},
+      ]},
+    ],
+    notes:["A greeting like 你好啊 is more colloquial than 你好嗎 and expects a positive answer.","好久不見 is used when meeting someone after a long time."],
+  },
+  {
+    id:3, zh:"我喜歡看電影", en:"I Like to Watch Movies",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"你喜歡看電影嗎？",py:"Nǐ xǐhuān kàn diànyǐng ma?",en:"Do you like to watch movies?"},
+        {s:1,zh:"很喜歡，你呢？電影、電視，我都喜歡。",py:"Hěn xǐhuān, nǐ ne? Diànyǐng, diànshì, wǒ dōu xǐhuān.",en:"Very much, and you? I like both movies and TV."},
+        {s:0,zh:"你喜歡看什麼電影？",py:"Nǐ xǐhuān kàn shénme diànyǐng?",en:"What kind of movies do you like?"},
+        {s:1,zh:"我喜歡看美國電影，你呢？",py:"Wǒ xǐhuān kàn Měiguó diànyǐng, nǐ ne?",en:"I like American movies, and you?"},
+        {s:0,zh:"美國電影、中國電影，我都喜歡。",py:"Měiguó diànyǐng, Zhōngguó diànyǐng, wǒ dōu xǐhuān.",en:"American movies, Chinese movies — I like them all."},
+        {s:1,zh:"你也喜歡看電視嗎？",py:"Nǐ yě xǐhuān kàn diànshì ma?",en:"Do you also like to watch TV?"},
+        {s:0,zh:"電視，我不太喜歡看。",py:"Diànshì, wǒ bú tài xǐhuān kàn.",en:"TV, I don't like to watch very much."},
+      ]},
+      {part:"II", speakers:["A","B"], lines:[
+        {s:0,zh:"你有汽車沒有？",py:"Nǐ yǒu qìchē méiyǒu?",en:"Do you have a car?"},
+        {s:1,zh:"沒有。",py:"Méiyǒu.",en:"No, I don't."},
+        {s:0,zh:"你要不要買汽車？",py:"Nǐ yào bú yào mǎi qìchē?",en:"Do you want to buy a car?"},
+        {s:1,zh:"我要買。",py:"Wǒ yào mǎi.",en:"I want to buy one."},
+        {s:0,zh:"你喜歡哪國車？",py:"Nǐ xǐhuān něiguó chē?",en:"Which country's cars do you like?"},
+        {s:1,zh:"我喜歡美國車。",py:"Wǒ xǐhuān Měiguó chē.",en:"I like American cars."},
+        {s:0,zh:"英國車很好看，你不喜歡嗎？",py:"Yīngguó chē hěn hǎokàn, nǐ bù xǐhuān ma?",en:"British cars are very nice-looking. Don't you like them?"},
+        {s:1,zh:"我也喜歡，可是英國車太貴。",py:"Wǒ yě xǐhuān, kěshì Yīngguó chē tài guì.",en:"I like them too, but British cars are too expensive."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"喜歡",py:"xǐhuān",pos:"V/AV",en:"to like, to be fond of",ex:"我喜歡他。",exEn:"I like him."},
+      {n:2,zh:"看",py:"kàn",pos:"V",en:"to watch, to read, to look at",ex:"你看誰？",exEn:"Who are you looking at?"},
+      {n:3,zh:"電影",py:"diànyǐng",pos:"N",en:"movie, film",ex:"你喜歡看電影嗎？",exEn:"Do you like movies?"},
+      {n:4,zh:"電視",py:"diànshì",pos:"N",en:"television, TV",ex:"我不太看電視。",exEn:"I don't watch TV much."},
+      {n:5,zh:"都",py:"dōu",pos:"A",en:"all, both",ex:"我們都是學生。",exEn:"We are all students."},
+      {n:6,zh:"日本",py:"Rìběn",pos:"N",en:"Japan, Japanese",ex:"他是日本人。",exEn:"He is Japanese."},
+      {n:7,zh:"有",py:"yǒu",pos:"V",en:"to have, there is/are",ex:"我有書。",exEn:"I have books."},
+      {n:8,zh:"沒有",py:"méiyǒu",pos:"V",en:"do not have, there is not",ex:"我沒有車。",exEn:"I don't have a car."},
+      {n:9,zh:"要",py:"yào",pos:"AV",en:"to want to, will",ex:"你要買什麼？",exEn:"What do you want to buy?"},
+      {n:10,zh:"買",py:"mǎi",pos:"V",en:"to buy",ex:"我要買書。",exEn:"I want to buy a book."},
+      {n:11,zh:"汽車",py:"qìchē",pos:"N",en:"automobile, car",ex:"你有汽車嗎？",exEn:"Do you have a car?"},
+      {n:12,zh:"可是",py:"kěshì",pos:"MA",en:"but, however",ex:"我喜歡，可是太貴。",exEn:"I like it, but it's too expensive."},
+      {n:13,zh:"貴",py:"guì",pos:"SV",en:"expensive; noble",ex:"這個太貴了。",exEn:"This is too expensive."},
+      {n:14,zh:"書",py:"shū",pos:"N",en:"book",ex:"你有什麼書？",exEn:"What books do you have?"},
+      {n:15,zh:"報",py:"bào",pos:"N",en:"newspaper",ex:"你看什麼報？",exEn:"What newspaper do you read?"},
+      {n:16,zh:"筆",py:"bǐ",pos:"N",en:"pen, pencil",ex:"你有沒有筆？",exEn:"Do you have a pen?"},
+      {n:17,zh:"法文",py:"Fǎwén",pos:"N",en:"French (language)",ex:"我沒有法文書。",exEn:"I don't have French books."},
+      {n:18,zh:"德國",py:"Déguó",pos:"N",en:"Germany, German",ex:"德國車很好。",exEn:"German cars are great."},
+      {n:19,zh:"太",py:"tài",pos:"A",en:"too (excessively)",ex:"太貴了。",exEn:"Too expensive."},
+      {n:20,zh:"好看",py:"hǎokàn",pos:"SV",en:"good-looking, attractive",ex:"英國車很好看。",exEn:"British cars are good-looking."},
+    ],
+    grammar:[
+      {title:"Subject-Verb-Object sentences",exp:"Chinese follows SVO word order, the same as English. The negative 不 comes before the verb.",patterns:[
+        {pat:"我（不）看書。",en:"I (don't) read books.",ex:"他不買筆。He's not buying a pen."},
+      ]},
+      {title:"Affirmative-Negative questions (V not V)",exp:"Another way to ask yes/no questions. Repeat verb with 沒 for 有, or 不 for other verbs.",patterns:[
+        {pat:"你有沒有書？",en:"Do you have a book?",ex:"你要不要買車？Do you want to buy a car?"},
+        {pat:"他買不買書？",en:"Is he buying a book?",ex:""},
+      ]},
+      {title:"都 — all, both",exp:"都 comes before the verb and groups subjects or objects together.",patterns:[
+        {pat:"電影、電視，我都喜歡。",en:"Movies and TV, I like them all.",ex:"我們都是學生。We are all students."},
+      ]},
+    ],
+    notes:["Unlike English, Chinese does not change verb forms for different subjects. 我是, 你是, 他是 — all use 是 unchanged.","沒 is the negative for 有. Never use 不有. For other verbs, use 不."],
+  },
+  {
+    id:4, zh:"這枝筆多少錢？", en:"How Much Is This Pen?",
+    dialogues:[
+      {part:"I", speakers:["店員 (Clerk)","客人 (Customer)"], lines:[
+        {s:0,zh:"先生，您要買什麼？",py:"Xiānshēng, nín yào mǎi shénme?",en:"Sir, what would you like to buy?"},
+        {s:1,zh:"我要買筆。",py:"Wǒ yào mǎi bǐ.",en:"I want to buy a pen."},
+        {s:0,zh:"我們有很多筆，您喜歡哪種？",py:"Wǒmen yǒu hěn duō bǐ, nín xǐhuān něi zhǒng?",en:"We have many pens. Which kind do you like?"},
+        {s:1,zh:"這種筆很好看，多少錢一枝？",py:"Zhèi zhǒng bǐ hěn hǎokàn, duōshǎo qián yī zhī?",en:"This kind of pen is nice-looking. How much for one?"},
+        {s:0,zh:"七毛四分一枝，您要幾枝？",py:"Qī máo sì fēn yī zhī, nín yào jǐ zhī?",en:"74 cents each. How many do you want?"},
+        {s:1,zh:"我要兩枝，兩枝多少錢？",py:"Wǒ yào liǎng zhī, liǎng zhī duōshǎo qián?",en:"I want two. How much for two?"},
+        {s:0,zh:"兩枝一塊四毛八。",py:"Liǎng zhī yī kuài sì máo bā.",en:"Two are $1.48."},
+        {s:1,zh:"我沒有零錢，我給你兩塊錢，請你找錢，好嗎？",py:"Wǒ méiyǒu língqián, wǒ gěi nǐ liǎng kuài qián, qǐng nǐ zhǎo qián, hǎo ma?",en:"I don't have change. I'll give you $2. Please give me change, OK?"},
+        {s:0,zh:"好，找你五毛二，謝謝。",py:"Hǎo, zhǎo nǐ wǔ máo èr, xièxiè.",en:"OK, here's 52 cents change. Thank you."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"枝",py:"zhī",pos:"M",en:"(measure word for pens, sticks)",ex:"一枝筆",exEn:"one pen"},
+      {n:2,zh:"多少",py:"duōshǎo",pos:"QW",en:"how much, how many",ex:"多少錢？",exEn:"How much money?"},
+      {n:3,zh:"錢",py:"qián",pos:"N",en:"money",ex:"你有錢嗎？",exEn:"Do you have money?"},
+      {n:4,zh:"毛",py:"máo",pos:"M",en:"dime (10 cents), máo",ex:"五毛錢",exEn:"50 cents"},
+      {n:5,zh:"分",py:"fēn",pos:"M",en:"cent (1/100 yuan)",ex:"一分錢",exEn:"one cent"},
+      {n:6,zh:"塊",py:"kuài",pos:"M",en:"dollar (spoken form of 元)",ex:"兩塊錢",exEn:"two dollars"},
+      {n:7,zh:"幾",py:"jǐ",pos:"QW",en:"how many (small number)",ex:"你要幾枝？",exEn:"How many do you want?"},
+      {n:8,zh:"兩",py:"liǎng",pos:"NU",en:"two (with measure words)",ex:"兩個人",exEn:"two people"},
+      {n:9,zh:"一共",py:"yīgòng",pos:"A",en:"altogether, in total",ex:"一共多少錢？",exEn:"How much altogether?"},
+      {n:10,zh:"零錢",py:"língqián",pos:"N",en:"change (coins), small change",ex:"我沒有零錢。",exEn:"I don't have change."},
+      {n:11,zh:"給",py:"gěi",pos:"V",en:"to give; for (coverb)",ex:"請給我一枝筆。",exEn:"Please give me a pen."},
+      {n:12,zh:"請",py:"qǐng",pos:"V",en:"please; to invite; to treat",ex:"請你等一下。",exEn:"Please wait a moment."},
+      {n:13,zh:"找",py:"zhǎo",pos:"V",en:"to look for; to give change",ex:"找你五毛。",exEn:"Here's 50 cents change."},
+      {n:14,zh:"種",py:"zhǒng",pos:"M/N",en:"kind, type",ex:"你喜歡哪種？",exEn:"Which kind do you like?"},
+      {n:15,zh:"那",py:"nà/nèi",pos:"DEM",en:"that",ex:"那是什麼？",exEn:"What is that?"},
+      {n:16,zh:"個",py:"gè",pos:"M",en:"(general measure word)",ex:"一個人",exEn:"one person"},
+      {n:17,zh:"本",py:"běn",pos:"M",en:"(measure word for books)",ex:"一本書",exEn:"one book"},
+      {n:18,zh:"位",py:"wèi",pos:"M",en:"(polite measure word for people)",ex:"這位先生",exEn:"this gentleman"},
+      {n:19,zh:"元",py:"yuán",pos:"M",en:"yuan, dollar (formal)",ex:"一百元",exEn:"100 yuan"},
+      {n:20,zh:"便宜",py:"piányí",pos:"SV",en:"cheap, inexpensive",ex:"這個很便宜。",exEn:"This is very cheap."},
+    ],
+    grammar:[
+      {title:"Measure words (M)",exp:"In Chinese, a number + measure word must precede a noun. Different nouns require specific measure words.",patterns:[
+        {pat:"NU + M + N",en:"Number + Measure Word + Noun",ex:"兩枝筆 (two pens), 三本書 (three books)"},
+        {pat:"一 → 兩 before MW",en:"Use 兩 (not 二) before measure words for 'two'",ex:"兩個人, 兩枝筆, 兩本書"},
+      ]},
+      {title:"Asking prices",exp:"Use 多少錢 to ask how much something costs.",patterns:[
+        {pat:"這個多少錢？",en:"How much is this?",ex:"一枝多少錢？How much per pen?"},
+        {pat:"N + 多少錢 + 一 + M？",en:"How much per ___?",ex:"多少錢一枝？How much each?"},
+      ]},
+      {title:"V-not-V with 有",exp:"To ask if someone has something, use 有沒有.",patterns:[
+        {pat:"你有沒有零錢？",en:"Do you have change?",ex:"你有沒有筆？Do you have a pen?"},
+      ]},
+    ],
+    notes:["Chinese currency: 元/塊 (dollar) > 毛/角 (10 cents) > 分 (1 cent). In spoken Mandarin, 塊 and 毛 are more common than 元 and 角."],
+  },
+  {
+    id:5, zh:"我家有五個人", en:"There Are Five Members in My Family",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"這是你爸爸媽媽的照片嗎？",py:"Zhè shì nǐ bàba māma de zhàopiàn ma?",en:"Is this a photo of your parents?"},
+        {s:1,zh:"是啊。",py:"Shì a.",en:"Yes."},
+        {s:0,zh:"你爸爸是老師嗎？",py:"Nǐ bàba shì lǎoshī ma?",en:"Is your father a teacher?"},
+        {s:1,zh:"對，他是英文老師。",py:"Duì, tā shì Yīngwén lǎoshī.",en:"Yes, he is an English teacher."},
+        {s:0,zh:"這張呢？這是你哥哥還是你弟弟？",py:"Zhèi zhāng ne? Zhè shì nǐ gēgē háishi nǐ dìdi?",en:"And this one? Is this your older brother or younger brother?"},
+        {s:1,zh:"是我哥哥，我沒有弟弟。",py:"Shì wǒ gēgē, wǒ méiyǒu dìdi.",en:"It's my older brother. I don't have a younger brother."},
+        {s:0,zh:"這幾個女孩子都是你妹妹嗎？",py:"Zhèi jǐ gè nǚháizi dōu shì nǐ mèimei ma?",en:"Are all these girls your younger sisters?"},
+        {s:1,zh:"不，一個是我妹妹，一個是我妹妹的朋友。",py:"Bù, yī gè shì wǒ mèimei, yī gè shì wǒ mèimei de péngyǒu.",en:"No, one is my younger sister, and one is my sister's friend."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"家",py:"jiā",pos:"N/M",en:"home, family; (measure for stores)",ex:"你家有幾個人？",exEn:"How many people are in your family?"},
+      {n:2,zh:"爸爸",py:"bàba",pos:"N",en:"father, dad",ex:"我爸爸是老師。",exEn:"My father is a teacher."},
+      {n:3,zh:"媽媽",py:"māma",pos:"N",en:"mother, mom",ex:"我媽媽有中文書。",exEn:"My mother has Chinese books."},
+      {n:4,zh:"哥哥",py:"gēgē",pos:"N",en:"older brother",ex:"我哥哥是美國人。",exEn:"My older brother is American."},
+      {n:5,zh:"姐姐",py:"jiějie",pos:"N",en:"older sister",ex:"她姐姐很漂亮。",exEn:"Her older sister is very pretty."},
+      {n:6,zh:"弟弟",py:"dìdi",pos:"N",en:"younger brother",ex:"他有兩個弟弟。",exEn:"He has two younger brothers."},
+      {n:7,zh:"妹妹",py:"mèimei",pos:"N",en:"younger sister",ex:"我妹妹叫美美。",exEn:"My younger sister is called Meimei."},
+      {n:8,zh:"老師",py:"lǎoshī",pos:"N",en:"teacher",ex:"他是英文老師。",exEn:"He is an English teacher."},
+      {n:9,zh:"照片",py:"zhàopiàn",pos:"N",en:"photograph",ex:"這是你的照片嗎？",exEn:"Is this your photo?"},
+      {n:10,zh:"對",py:"duì",pos:"SV/IE",en:"correct, right; yes, that's right",ex:"對，他是老師。",exEn:"Yes, he is a teacher."},
+      {n:11,zh:"還是",py:"háishi",pos:"CJ",en:"or (in questions)",ex:"他是哥哥還是弟弟？",exEn:"Is he the older or younger brother?"},
+      {n:12,zh:"女孩子",py:"nǚháizi",pos:"N",en:"girl",ex:"那個女孩子叫什麼？",exEn:"What is that girl's name?"},
+      {n:13,zh:"男孩子",py:"nánháizi",pos:"N",en:"boy",ex:"那個男孩子是誰？",exEn:"Who is that boy?"},
+      {n:14,zh:"朋友",py:"péngyǒu",pos:"N",en:"friend",ex:"她是我的朋友。",exEn:"She is my friend."},
+      {n:15,zh:"的",py:"de",pos:"P",en:"possessive/modification particle",ex:"我的書",exEn:"my book"},
+      {n:16,zh:"張",py:"zhāng",pos:"M",en:"(measure word for flat things: paper, photos)",ex:"一張照片",exEn:"one photo"},
+      {n:17,zh:"兒子",py:"érzi",pos:"N",en:"son",ex:"他有兩個兒子。",exEn:"He has two sons."},
+      {n:18,zh:"女兒",py:"nǚér",pos:"N",en:"daughter",ex:"他有一個女兒。",exEn:"He has one daughter."},
+      {n:19,zh:"孩子",py:"háizi",pos:"N",en:"child, children",ex:"他們有三個孩子。",exEn:"They have three children."},
+      {n:20,zh:"隻",py:"zhī",pos:"M",en:"(measure word for animals)",ex:"一隻貓",exEn:"one cat"},
+    ],
+    grammar:[
+      {title:"的 — possessive and modification",exp:"的 marks possession (like 's) or connects a modifier to a noun. It can often be omitted between pronouns and close relations.",patterns:[
+        {pat:"我的書 / 我書",en:"my book (close relation: 的 optional)",ex:"我爸爸 = 我的爸爸"},
+        {pat:"他的朋友",en:"his friend (acquaintance: 的 required)",ex:"他的老師"},
+      ]},
+      {title:"還是 — or (in questions)",exp:"Use 還是 between two choices in a question. Note: 或者 is used in statements, not questions.",patterns:[
+        {pat:"A 還是 B？",en:"A or B?",ex:"你喝茶還是咖啡？Tea or coffee?"},
+      ]},
+    ],
+    notes:["Chinese kinship terms are highly specific — they differ based on relative age and which side of the family. 哥哥/弟弟 (older/younger brother), 姐姐/妹妹 (older/younger sister)."],
+  },
+  {
+    id:6, zh:"我想買一個新照像機", en:"I'm Thinking About Buying a New Camera",
+    dialogues:[
+      {part:"I", speakers:["店員 (Clerk)","客人 (Customer)"], lines:[
+        {s:0,zh:"請問，先生，您要買照像機嗎？",py:"Qǐngwèn, xiānshēng, nín yào mǎi zhàoxiàngjī ma?",en:"Excuse me, sir, would you like to buy a camera?"},
+        {s:1,zh:"是啊，我的照像機太舊了，我想買一個新的。",py:"Shì a, wǒde zhàoxiàngjī tài jiù le, wǒ xiǎng mǎi yīge xīnde.",en:"Yes, my camera is too old. I want to buy a new one."},
+        {s:0,zh:"您喜歡哪國貨？",py:"Nín xǐhuān něiguó huò?",en:"Which country's goods do you prefer?"},
+        {s:1,zh:"我都看看，好嗎？",py:"Wǒ dōu kànkan, hǎo ma?",en:"May I take a look at all of them?"},
+        {s:0,zh:"這個是德國貨，您覺得怎麼樣？",py:"Zhèige shì Déguó huò, nín juéde zěnmeyàng?",en:"This is German-made. What do you think?"},
+        {s:1,zh:"這個太大了，有沒有小一點兒的？",py:"Zhèige tài dà le, yǒu méiyǒu xiǎo yīdiǎnr de?",en:"This one is too big. Is there a smaller one?"},
+        {s:0,zh:"您看這個，這個是日本貨。",py:"Nín kàn zhèige, zhèige shì Rìběn huò.",en:"Look at this one — it's Japanese."},
+        {s:1,zh:"真好看。多少錢？",py:"Zhēn hǎokàn. Duōshǎo qián?",en:"Really nice-looking. How much is it?"},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"想",py:"xiǎng",pos:"AV/V",en:"to want to; to think, to miss",ex:"他想買一枝美國筆。",exEn:"He wants to buy an American pen."},
+      {n:2,zh:"新",py:"xīn",pos:"SV",en:"new",ex:"我要買一個新的。",exEn:"I want to buy a new one."},
+      {n:3,zh:"舊",py:"jiù",pos:"SV",en:"old (for objects), used",ex:"我的車太舊了。",exEn:"My car is too old."},
+      {n:4,zh:"貨",py:"huò",pos:"N",en:"goods, merchandise",ex:"這是日本貨。",exEn:"This is Japanese merchandise."},
+      {n:5,zh:"看看",py:"kànkan",pos:"V",en:"to take a look (tentative)",ex:"我看看，好嗎？",exEn:"May I take a look?"},
+      {n:6,zh:"覺得",py:"juéde",pos:"V",en:"to feel, to think, to find",ex:"你覺得怎麼樣？",exEn:"What do you think?"},
+      {n:7,zh:"怎麼樣",py:"zěnmeyàng",pos:"QW",en:"how is it? what do you think?",ex:"這個怎麼樣？",exEn:"How about this one?"},
+      {n:8,zh:"大",py:"dà",pos:"SV",en:"big, large",ex:"這個太大了。",exEn:"This is too big."},
+      {n:9,zh:"小",py:"xiǎo",pos:"SV",en:"small, little",ex:"有沒有小一點兒的？",exEn:"Is there a smaller one?"},
+      {n:10,zh:"真",py:"zhēn",pos:"A",en:"really, truly",ex:"真好看！",exEn:"Really nice-looking!"},
+      {n:11,zh:"照像機",py:"zhàoxiàngjī",pos:"N",en:"camera",ex:"你的照像機是哪國貨？",exEn:"Which country made your camera?"},
+      {n:12,zh:"一點兒",py:"yīdiǎnr",pos:"M/A",en:"a little, a bit",ex:"小一點兒的",exEn:"a slightly smaller one"},
+      {n:13,zh:"好用",py:"hǎoyòng",pos:"SV",en:"easy to use, practical",ex:"這個很好用。",exEn:"This one is very practical."},
+      {n:14,zh:"萬",py:"wàn",pos:"NU",en:"10,000",ex:"一萬塊錢",exEn:"10,000 dollars"},
+      {n:15,zh:"零",py:"líng",pos:"NU",en:"zero; and (in numbers)",ex:"一百零五",exEn:"one hundred and five"},
+      {n:16,zh:"請問",py:"qǐngwèn",pos:"IE",en:"Excuse me, may I ask...",ex:"請問，這個多少錢？",exEn:"Excuse me, how much is this?"},
+      {n:17,zh:"了",py:"le",pos:"P",en:"sentence particle (change of state)",ex:"太舊了。",exEn:"It's too old now."},
+      {n:18,zh:"高",py:"gāo",pos:"SV",en:"tall, high",ex:"他很高。",exEn:"He is very tall."},
+      {n:19,zh:"矮",py:"ǎi",pos:"SV",en:"short (in height)",ex:"她不高，有點矮。",exEn:"She's not tall, a bit short."},
+      {n:20,zh:"胖",py:"pàng",pos:"SV",en:"fat, chubby",ex:"這個孩子很胖。",exEn:"This child is very chubby."},
+    ],
+    grammar:[
+      {title:"了 — change of state or completion",exp:"了 at the end of a sentence signals a change in situation or a newly relevant state.",patterns:[
+        {pat:"太舊了。",en:"It's gotten too old.",ex:"我的照像機太舊了。My camera is too old now."},
+        {pat:"他走了。",en:"He has left (now).",ex:""},
+      ]},
+      {title:"Verb reduplication (tentative aspect)",exp:"Reduplicate a verb to soften the action, making it more casual or tentative.",patterns:[
+        {pat:"看看",en:"take a look",ex:"我看看，好嗎？May I look around?"},
+        {pat:"想一想",en:"think about it",ex:"讓我想一想。Let me think about it."},
+      ]},
+    ],
+    notes:["Large numbers in Chinese: 萬 (10,000) is a key unit. 一百萬 = 1,000,000 (one million). Count: 十 (10) → 百 (100) → 千 (1,000) → 萬 (10,000)."],
+  },
+  {
+    id:7, zh:"你的法文念得真好聽", en:"Your French Really Sounds Nice",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"文生，你在念什麼呢？",py:"Wénshēng, nǐ zài niàn shénme ne?",en:"Wensheng, what are you reading?"},
+        {s:1,zh:"我在念法文。",py:"Wǒ zài niàn Fǎwén.",en:"I'm reading French."},
+        {s:0,zh:"你的法文，念得真好聽。",py:"Nǐde Fǎwén, niàn de zhēn hǎotīng.",en:"Your French really sounds nice."},
+        {s:1,zh:"謝謝，可是我學得很慢。",py:"Xièxiè, kěshì wǒ xué de hěn màn.",en:"Thank you, but I learn slowly."},
+        {s:0,zh:"學法文有意思嗎？",py:"Xué Fǎwén yǒu yìsi ma?",en:"Is learning French interesting?"},
+        {s:1,zh:"很有意思，可是我覺得有一點兒難。",py:"Hěn yǒu yìsi, kěshì wǒ juéde yǒu yīdiǎnr nán.",en:"Very interesting, but I find it a little difficult."},
+        {s:0,zh:"我也想學一點兒法國語，你可以教我嗎？",py:"Wǒ yě xiǎng xué yīdiǎnr Fǎguóyǔ, nǐ kěyǐ jiāo wǒ ma?",en:"I'd also like to learn a little French. Can you teach me?"},
+        {s:1,zh:"現在我的法國語還說得不好，不能教你。",py:"Xiànzài wǒde Fǎguóyǔ hái shuō de bù hǎo, bù néng jiāo nǐ.",en:"My French still isn't good enough to teach you."},
+        {s:0,zh:"你會不會唱法國歌兒？",py:"Nǐ huì bú huì chàng Fǎguó gēr?",en:"Can you sing a French song?"},
+        {s:1,zh:"我只會唱一首。",py:"Wǒ zhǐ huì chàng yī shǒu.",en:"I can only sing one."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"念",py:"niàn",pos:"V",en:"to read aloud, to study",ex:"請你念。",exEn:"Please read it aloud."},
+      {n:2,zh:"得",py:"de",pos:"P",en:"degree complement particle",ex:"他說得很好。",exEn:"He speaks very well."},
+      {n:3,zh:"慢",py:"màn",pos:"SV",en:"slow",ex:"我學得很慢。",exEn:"I learn slowly."},
+      {n:4,zh:"學",py:"xué",pos:"V",en:"to learn, to study",ex:"你學什麼？",exEn:"What are you studying?"},
+      {n:5,zh:"有意思",py:"yǒu yìsi",pos:"SV",en:"interesting",ex:"學中文很有意思。",exEn:"Learning Chinese is interesting."},
+      {n:6,zh:"一點兒",py:"yīdiǎnr",pos:"A/M",en:"a little, a bit",ex:"有一點兒難。",exEn:"A little difficult."},
+      {n:7,zh:"難",py:"nán",pos:"SV",en:"difficult, hard",ex:"中文不太難。",exEn:"Chinese isn't too difficult."},
+      {n:8,zh:"可以",py:"kěyǐ",pos:"AV",en:"can, may (permission)",ex:"你可以教我嗎？",exEn:"Can you teach me?"},
+      {n:9,zh:"教",py:"jiāo",pos:"V",en:"to teach",ex:"他教中文。",exEn:"He teaches Chinese."},
+      {n:10,zh:"現在",py:"xiànzài",pos:"MA",en:"now, at present",ex:"現在幾點？",exEn:"What time is it now?"},
+      {n:11,zh:"還",py:"hái",pos:"A",en:"still, yet; also",ex:"他還在這裡。",exEn:"He is still here."},
+      {n:12,zh:"說",py:"shuō",pos:"V",en:"to speak, to say",ex:"你說得很好。",exEn:"You speak very well."},
+      {n:13,zh:"能",py:"néng",pos:"AV",en:"can (ability/possibility)",ex:"你能給我嗎？",exEn:"Can you give me one?"},
+      {n:14,zh:"會",py:"huì",pos:"AV",en:"can (learned skill)",ex:"你會唱歌嗎？",exEn:"Can you sing?"},
+      {n:15,zh:"唱",py:"chàng",pos:"V",en:"to sing",ex:"她唱得很好。",exEn:"She sings very well."},
+      {n:16,zh:"歌兒",py:"gēr",pos:"N",en:"song",ex:"你唱一首歌兒。",exEn:"Sing a song."},
+      {n:17,zh:"只",py:"zhǐ",pos:"A",en:"only, just",ex:"我只會一首。",exEn:"I can only do one."},
+      {n:18,zh:"寫",py:"xiě",pos:"V",en:"to write",ex:"你會寫漢字嗎？",exEn:"Can you write Chinese characters?"},
+      {n:19,zh:"做飯",py:"zuòfàn",pos:"VO",en:"to cook (make food)",ex:"媽媽在做飯。",exEn:"Mom is cooking."},
+      {n:20,zh:"好聽",py:"hǎotīng",pos:"SV",en:"pleasant to listen to, nice-sounding",ex:"這首歌很好聽。",exEn:"This song sounds nice."},
+    ],
+    grammar:[
+      {title:"V-得 degree complements",exp:"得 connects a verb to a complement describing how well/badly the action was done.",patterns:[
+        {pat:"S V 得 (A) SV",en:"Subject + verb + 得 + (adverb) + stative verb",ex:"他說得很好。He speaks very well."},
+        {pat:"S V O, V 得 (A) SV",en:"When there's an object, repeat the verb",ex:"他念法文，念得很好。He reads French well."},
+      ]},
+      {title:"Modal verbs: 能, 會, 可以",exp:"All three mean 'can', but differ in nuance: 會 = learned skill, 能 = physical ability/circumstances, 可以 = permission.",patterns:[
+        {pat:"你會說中文嗎？",en:"Can you speak Chinese? (learned skill)",ex:"我會說一點兒。"},
+        {pat:"你可以教我嗎？",en:"May you teach me? (permission)",ex:""},
+        {pat:"他能來嗎？",en:"Can he come? (circumstance)",ex:""},
+      ]},
+    ],
+    notes:["在 + V indicates an ongoing action: 我在念法文 = I am (in the process of) reading French. Similar to the English present continuous."],
+  },
+  {
+    id:8, zh:"這是我們新買的電視機", en:"This Is Our Newly Purchased Television",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"這是你們新買的電視機嗎？",py:"Zhè shì nǐmen xīn mǎide diànshìjī ma?",en:"Is this the new TV you bought?"},
+        {s:1,zh:"是啊。",py:"Shì a.",en:"Yes."},
+        {s:0,zh:"你常看電視嗎？",py:"Nǐ cháng kàn diànshì ma?",en:"Do you often watch TV?"},
+        {s:1,zh:"常看，我最喜歡看王英英唱歌兒。",py:"Cháng kàn, wǒ zuì xǐhuān kàn Wáng Yīngyīng chàng gēr.",en:"Often. I especially love watching Wang Yingying sing."},
+        {s:0,zh:"對啊，她唱的歌兒都很好聽。",py:"Duì a, tā chàng de gēr dōu hěn hǎotīng.",en:"Yes, all the songs she sings are beautiful."},
+        {s:1,zh:"她跳舞也不錯。",py:"Tā tiàowǔ yě búcuò.",en:"Her dancing is also quite good."},
+        {s:0,zh:"她穿的衣服，也很好看。",py:"Tā chuān de yīfú, yě hěn hǎokàn.",en:"The clothes she wears are also very nice."},
+        {s:1,zh:"因為她是演員，所以很注意打扮。",py:"Yīnwèi tā shì yǎnyuán, suǒyǐ hěn zhùyì dǎbàn.",en:"Because she's an actress, she pays a lot of attention to her appearance."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"常",py:"cháng",pos:"A",en:"often, frequently",ex:"他常說他很忙。",exEn:"He often says he's busy."},
+      {n:2,zh:"最",py:"zuì",pos:"A",en:"most, -est",ex:"我最喜歡看電影。",exEn:"I like watching movies the most."},
+      {n:3,zh:"不錯",py:"búcuò",pos:"SV",en:"not bad, pretty good",ex:"你的中文不錯。",exEn:"Your Chinese is pretty good."},
+      {n:4,zh:"跳舞",py:"tiàowǔ",pos:"VO",en:"to dance",ex:"她跳舞跳得很好。",exEn:"She dances very well."},
+      {n:5,zh:"穿",py:"chuān",pos:"V",en:"to wear, to put on",ex:"她穿的衣服很好看。",exEn:"The clothes she wears are nice."},
+      {n:6,zh:"衣服",py:"yīfú",pos:"N",en:"clothes, clothing",ex:"這件衣服多少錢？",exEn:"How much is this garment?"},
+      {n:7,zh:"因為",py:"yīnwèi",pos:"MA",en:"because",ex:"因為他是老師，所以很忙。",exEn:"Because he's a teacher, he's very busy."},
+      {n:8,zh:"所以",py:"suǒyǐ",pos:"MA",en:"therefore, so",ex:"所以他很忙。",exEn:"So he's very busy."},
+      {n:9,zh:"演員",py:"yǎnyuán",pos:"N",en:"actor, actress, performer",ex:"她是演員。",exEn:"She is an actress."},
+      {n:10,zh:"母親",py:"mǔqīn",pos:"N",en:"mother (formal)",ex:"我母親很忙。",exEn:"My mother is very busy."},
+      {n:11,zh:"父親",py:"fùqīn",pos:"N",en:"father (formal)",ex:"他父親是老師。",exEn:"His father is a teacher."},
+      {n:12,zh:"電視機",py:"diànshìjī",pos:"N",en:"television set",ex:"這是新買的電視機。",exEn:"This is a newly purchased TV."},
+      {n:13,zh:"容易",py:"róngyì",pos:"SV",en:"easy",ex:"這不太容易。",exEn:"This isn't too easy."},
+      {n:14,zh:"漂亮",py:"piàoliàng",pos:"SV",en:"pretty, beautiful",ex:"她很漂亮。",exEn:"She is very pretty."},
+      {n:15,zh:"一定",py:"yīdìng",pos:"A",en:"definitely, certainly",ex:"他一定是美國人。",exEn:"He must be American."},
+      {n:16,zh:"畫畫兒",py:"huà huàr",pos:"VO",en:"to paint, to draw",ex:"他畫畫兒畫得很好。",exEn:"He draws very well."},
+      {n:17,zh:"唱歌兒",py:"chàng gēr",pos:"VO",en:"to sing (a song)",ex:"她唱歌兒唱得很好聽。",exEn:"She sings very nicely."},
+      {n:18,zh:"打扮",py:"dǎbàn",pos:"V/N",en:"to dress up, appearance",ex:"她很注意打扮。",exEn:"She pays attention to her appearance."},
+      {n:19,zh:"新買的",py:"xīn mǎide",pos:"VP",en:"newly purchased",ex:"這是新買的。",exEn:"This was newly purchased."},
+      {n:20,zh:"注意",py:"zhùyì",pos:"V",en:"to pay attention to, to be careful",ex:"你要注意。",exEn:"You need to be careful."},
+    ],
+    grammar:[
+      {title:"Clauses with 的 as noun modifiers",exp:"A verb clause + 的 can modify a noun. The modified noun is often omitted when understood.",patterns:[
+        {pat:"V 的 N",en:"the N that [subject] V-ed",ex:"她唱的歌兒 = the songs she sings"},
+        {pat:"新買的（電視機）",en:"the (TV) that was newly purchased",ex:"這是我們新買的電視機。"},
+      ]},
+      {title:"因為...所以... — because...therefore...",exp:"Use this pair to express cause and effect. Either clause can be omitted if clear from context.",patterns:[
+        {pat:"因為 A，所以 B。",en:"Because A, therefore B.",ex:"因為她是演員，所以很注意打扮。"},
+      ]},
+    ],
+    notes:["The 的 construction is very flexible in Chinese. The noun after 的 can often be dropped when it's clear from context, leaving just the modifier."],
+  },
+  {
+    id:9, zh:"你們學校在哪裡？", en:"Where Is Your School?",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"你常在宿舍念書嗎？",py:"Nǐ cháng zài sùshè niànshū ma?",en:"Do you often study in the dormitory?"},
+        {s:1,zh:"不，宿舍人太多，我常去圖書館念書。",py:"Bù, sùshè rén tài duō, wǒ cháng qù túshūguǎn niànshū.",en:"No, there are too many people in the dorm. I often go to the library to study."},
+        {s:0,zh:"學校附近有書店嗎？",py:"Xuéxiào fùjìn yǒu shūdiàn ma?",en:"Is there a bookstore near school?"},
+        {s:1,zh:"有，學校外面有兩家書店，同學都喜歡去。",py:"Yǒu, xuéxiào wàimian yǒu liǎng jiā shūdiàn, tóngxué dōu xǐhuān qù.",en:"Yes, there are two bookstores outside school. Classmates all like to go there."},
+        {s:0,zh:"樓上有幾個房間？",py:"Lóushàng yǒu jǐ gè fángjiān?",en:"How many rooms are upstairs?"},
+        {s:1,zh:"樓上有四個房間，都很大。",py:"Lóushàng yǒu sì gè fángjiān, dōu hěn dà.",en:"There are four rooms upstairs, all very large."},
+        {s:0,zh:"附近有小學嗎？",py:"Fùjìn yǒu xiǎoxué ma?",en:"Is there an elementary school nearby?"},
+        {s:1,zh:"有，離這兒不遠。",py:"Yǒu, lí zhèr bù yuǎn.",en:"Yes, not far from here."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"在",py:"zài",pos:"V/CV",en:"to be at/in/on; (at a location)",ex:"你家在哪裡？",exEn:"Where is your home?"},
+      {n:2,zh:"哪裡",py:"nǎlǐ",pos:"QW",en:"where",ex:"你在哪裡？",exEn:"Where are you?"},
+      {n:3,zh:"路",py:"lù",pos:"N",en:"road, street",ex:"這是東一路。",exEn:"This is East 1st Road."},
+      {n:4,zh:"圖書館",py:"túshūguǎn",pos:"N",en:"library",ex:"我去圖書館念書。",exEn:"I go to the library to study."},
+      {n:5,zh:"宿舍",py:"sùshè",pos:"N",en:"dormitory",ex:"你住在宿舍嗎？",exEn:"Do you live in the dorm?"},
+      {n:6,zh:"書店",py:"shūdiàn",pos:"N",en:"bookstore",ex:"附近有書店嗎？",exEn:"Is there a bookstore nearby?"},
+      {n:7,zh:"裡面",py:"lǐmiàn",pos:"N(PW)",en:"inside",ex:"他在裡面。",exEn:"He is inside."},
+      {n:8,zh:"外面",py:"wàimiàn",pos:"N(PW)",en:"outside",ex:"他在外面。",exEn:"He is outside."},
+      {n:9,zh:"前面",py:"qiánmiàn",pos:"N(PW)",en:"in front",ex:"學校前面有一家書店。",exEn:"There's a bookstore in front of the school."},
+      {n:10,zh:"後面",py:"hòumiàn",pos:"N(PW)",en:"behind, in back",ex:"後面是什麼？",exEn:"What's behind it?"},
+      {n:11,zh:"旁邊",py:"pángbiān",pos:"N(PW)",en:"beside, next to",ex:"她在我旁邊。",exEn:"She is next to me."},
+      {n:12,zh:"樓上",py:"lóushàng",pos:"N(PW)",en:"upstairs",ex:"樓上有四個房間。",exEn:"There are four rooms upstairs."},
+      {n:13,zh:"樓下",py:"lóuxià",pos:"N(PW)",en:"downstairs",ex:"他在樓下。",exEn:"He is downstairs."},
+      {n:14,zh:"房間",py:"fángjiān",pos:"N",en:"room",ex:"你的房間很大。",exEn:"Your room is very big."},
+      {n:15,zh:"桌子",py:"zhuōzi",pos:"N",en:"table, desk",ex:"書在桌子上。",exEn:"The book is on the table."},
+      {n:16,zh:"椅子",py:"yǐzi",pos:"N",en:"chair",ex:"請坐椅子。",exEn:"Please sit in the chair."},
+      {n:17,zh:"附近",py:"fùjìn",pos:"N(PW)",en:"nearby, in the vicinity",ex:"附近有書店嗎？",exEn:"Is there a bookstore nearby?"},
+      {n:18,zh:"離",py:"lí",pos:"CV",en:"from, away from (distance)",ex:"我家離學校不遠。",exEn:"My home is not far from school."},
+      {n:19,zh:"遠",py:"yuǎn",pos:"SV",en:"far, distant",ex:"台灣離美國很遠。",exEn:"Taiwan is very far from America."},
+      {n:20,zh:"近",py:"jìn",pos:"SV",en:"near, close",ex:"學校離這兒很近。",exEn:"The school is very close to here."},
+    ],
+    grammar:[
+      {title:"Location words (PW) — position nouns",exp:"Chinese uses position nouns after place names to indicate location. They can follow any noun.",patterns:[
+        {pat:"N + 上/下/裡/外/前/後/旁邊",en:"on top of/below/inside/outside/in front of/behind/beside N",ex:"書桌上有一本書。There's a book on the desk."},
+      ]},
+      {title:"在 S PW V — V at a location",exp:"在 as a coverb indicates where an action takes place. It comes before the verb.",patterns:[
+        {pat:"S 在 PW V",en:"Subject does V at [place]",ex:"我在圖書館念書。I study at the library."},
+      ]},
+      {title:"離 — distance from",exp:"Use 離 to express the distance between two places.",patterns:[
+        {pat:"A 離 B (不) 遠/近",en:"A is (not) far/close from B",ex:"我家離學校不遠。My home is not far from school."},
+      ]},
+    ],
+    notes:["Position suffixes 面/頭/邊 are often interchangeable: 上面=上頭=上邊. 面 is the most common in Taiwan Mandarin."],
+  },
+  {
+    id:10, zh:"我到日本去了", en:"I Went to Japan",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"聽說你到日本去了。",py:"Tīngshuō nǐ dào Rìběn qù le.",en:"I heard you went to Japan."},
+        {s:1,zh:"是啊。",py:"Shì a.",en:"Yes."},
+        {s:0,zh:"你是為什麼去的？",py:"Nǐ shì wèishénme qù de?",en:"Why did you go?"},
+        {s:1,zh:"我是去玩兒的。",py:"Wǒ shì qù wánr de.",en:"I went to have fun (for vacation)."},
+        {s:0,zh:"你是一個人去的嗎？",py:"Nǐ shì yī gè rén qù de ma?",en:"Did you go alone?"},
+        {s:1,zh:"不是，我是跟兩個朋友一塊兒去的。",py:"Búshì, wǒ shì gēn liǎng gè péngyǒu yīkuàir qù de.",en:"No, I went with two friends."},
+        {s:0,zh:"你們是怎麼去的？",py:"Nǐmen shì zěnme qù de?",en:"How did you get there?"},
+        {s:1,zh:"我們是坐飛機去的。",py:"Wǒmen shì zuò fēijī qù de.",en:"We went by airplane."},
+        {s:0,zh:"你們玩兒得怎麼樣？",py:"Nǐmen wánr de zěnmeyàng?",en:"How was your trip?"},
+        {s:1,zh:"我們玩兒得很好。",py:"Wǒmen wánr de hěn hǎo.",en:"We had a great time."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"聽說",py:"tīngshuō",pos:"V",en:"to hear that, I heard",ex:"聽說你去了日本。",exEn:"I heard you went to Japan."},
+      {n:2,zh:"到",py:"dào",pos:"V/CV",en:"to arrive; to (destination)",ex:"我到日本去了。",exEn:"I went to Japan."},
+      {n:3,zh:"為什麼",py:"wèishénme",pos:"QW",en:"why",ex:"你為什麼去？",exEn:"Why did you go?"},
+      {n:4,zh:"玩兒",py:"wánr",pos:"V",en:"to play, to have fun, to visit",ex:"我去玩兒。",exEn:"I went for fun."},
+      {n:5,zh:"跟",py:"gēn",pos:"CV",en:"with (together with)",ex:"我跟他一塊兒去。",exEn:"I went with him."},
+      {n:6,zh:"一塊兒",py:"yīkuàir",pos:"A",en:"together",ex:"我們一塊兒去。",exEn:"We'll go together."},
+      {n:7,zh:"怎麼",py:"zěnme",pos:"QW",en:"how, in what way",ex:"你怎麼去？",exEn:"How are you going?"},
+      {n:8,zh:"坐",py:"zuò",pos:"V",en:"to sit; to travel by (vehicle)",ex:"我坐飛機去。",exEn:"I'm going by plane."},
+      {n:9,zh:"飛機",py:"fēijī",pos:"N",en:"airplane",ex:"飛機票好買嗎？",exEn:"Are plane tickets easy to buy?"},
+      {n:10,zh:"票",py:"piào",pos:"N",en:"ticket",ex:"你買票了嗎？",exEn:"Did you buy tickets?"},
+      {n:11,zh:"昨天",py:"zuótiān",pos:"MA",en:"yesterday",ex:"昨天你去哪裡了？",exEn:"Where did you go yesterday?"},
+      {n:12,zh:"今天",py:"jīntiān",pos:"MA",en:"today",ex:"今天天氣很好。",exEn:"The weather is nice today."},
+      {n:13,zh:"明天",py:"míngtiān",pos:"MA",en:"tomorrow",ex:"明天你去哪裡？",exEn:"Where are you going tomorrow?"},
+      {n:14,zh:"早上",py:"zǎoshàng",pos:"MA",en:"morning",ex:"早上好！",exEn:"Good morning!"},
+      {n:15,zh:"晚上",py:"wǎnshàng",pos:"MA",en:"evening, night",ex:"晚上我念書。",exEn:"In the evening I study."},
+      {n:16,zh:"從",py:"cóng",pos:"CV",en:"from (starting point)",ex:"從台灣到日本。",exEn:"From Taiwan to Japan."},
+      {n:17,zh:"來",py:"lái",pos:"V",en:"to come",ex:"你來這裡做什麼？",exEn:"Why did you come here?"},
+      {n:18,zh:"回",py:"huí",pos:"V",en:"to return, to go back",ex:"你幾點回家？",exEn:"What time are you going home?"},
+      {n:19,zh:"便宜",py:"piányí",pos:"SV",en:"cheap, inexpensive",ex:"飛機票不便宜。",exEn:"Plane tickets aren't cheap."},
+      {n:20,zh:"方便",py:"fāngbiàn",pos:"SV",en:"convenient",ex:"坐飛機很方便。",exEn:"Flying is very convenient."},
+    ],
+    grammar:[
+      {title:"是...的 — emphasizing context of past action",exp:"When 是...的 surrounds a past action, it emphasizes when, how, where, or with whom the action occurred.",patterns:[
+        {pat:"你是怎麼去的？",en:"How did you go?",ex:"我是坐飛機去的。I went by airplane."},
+        {pat:"你是跟誰去的？",en:"With whom did you go?",ex:"我是跟朋友去的。I went with a friend."},
+      ]},
+      {title:"來 and 去 — direction of motion",exp:"來 indicates motion toward the speaker. 去 indicates motion away from the speaker.",patterns:[
+        {pat:"從 A 到 B 來/去",en:"to come/go from A to B",ex:"從台灣到日本去。Go from Taiwan to Japan."},
+      ]},
+    ],
+    notes:["了 at the end of a sentence signals a completed action or change of state. It does not correspond exactly to the English past tense — context determines tense in Chinese."],
+  },
+  {
+    id:11, zh:"你幾點下課？", en:"When Do You Get Out of Class?",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"今天下午你有課嗎？",py:"Jīntiān xiàwǔ nǐ yǒu kè ma?",en:"Do you have class this afternoon?"},
+        {s:1,zh:"有，下午我有兩個鐘頭的課。",py:"Yǒu, xiàwǔ wǒ yǒu liǎng gè zhōngtóu de kè.",en:"Yes, I have two hours of class this afternoon."},
+        {s:0,zh:"你幾點鐘下課？",py:"Nǐ jǐ diǎn zhōng xià kè?",en:"What time do you get out of class?"},
+        {s:1,zh:"三點半。",py:"Sān diǎn bàn.",en:"Three-thirty."},
+        {s:0,zh:"我也是三點半下課。聽說有一個電影不錯，我們一起去看，好不好？",py:"Wǒ yě shì sān diǎn bàn xià kè. Tīngshuō yǒu yī gè diànyǐng búcuò, wǒmen yīqǐ qù kàn, hǎo bù hǎo?",en:"I also get out at 3:30. I heard there's a good movie. Shall we go together?"},
+        {s:1,zh:"好啊！電影是幾點鐘的？",py:"Hǎo a! Diànyǐng shì jǐ diǎn zhōng de?",en:"Great! What time is the movie?"},
+        {s:0,zh:"四點一刻。我想下了課，馬上就去買票。",py:"Sì diǎn yī kè. Wǒ xiǎng xià le kè, mǎshàng jiù qù mǎi piào.",en:"4:15. I think I'll go buy tickets right after class."},
+        {s:1,zh:"那麼，我三點四十分在學校門口等你，好嗎？",py:"Nàme, wǒ sān diǎn sìshí fēn zài xuéxiào ménkǒu děng nǐ, hǎo ma?",en:"Then I'll wait for you at the school gate at 3:40, OK?"},
+        {s:0,zh:"好啊！下午見。",py:"Hǎo a! Xiàwǔ jiàn.",en:"Great! See you this afternoon."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"幾點",py:"jǐ diǎn",pos:"QW",en:"what time, what o'clock",ex:"現在幾點？",exEn:"What time is it now?"},
+      {n:2,zh:"點鐘",py:"diǎn zhōng",pos:"M",en:"o'clock",ex:"三點鐘",exEn:"three o'clock"},
+      {n:3,zh:"下課",py:"xià kè",pos:"VO",en:"to finish class, get out of class",ex:"你幾點下課？",exEn:"When do you get out of class?"},
+      {n:4,zh:"半",py:"bàn",pos:"NU",en:"half",ex:"三點半",exEn:"three-thirty"},
+      {n:5,zh:"一刻",py:"yī kè",pos:"M",en:"quarter (of an hour)",ex:"四點一刻",exEn:"quarter past four (4:15)"},
+      {n:6,zh:"分鐘",py:"fēnzhōng",pos:"M",en:"minute",ex:"十分鐘",exEn:"ten minutes"},
+      {n:7,zh:"就",py:"jiù",pos:"A",en:"then, right away, as soon as",ex:"我馬上就去。",exEn:"I'll go right away."},
+      {n:8,zh:"馬上",py:"mǎshàng",pos:"A",en:"immediately, right away",ex:"我馬上來。",exEn:"I'll come right away."},
+      {n:9,zh:"門口",py:"ménkǒu",pos:"N(PW)",en:"doorway, entrance, gate",ex:"在學校門口等我。",exEn:"Wait for me at the school entrance."},
+      {n:10,zh:"等",py:"děng",pos:"V",en:"to wait, to wait for",ex:"我等你。",exEn:"I'll wait for you."},
+      {n:11,zh:"下午",py:"xiàwǔ",pos:"MA",en:"afternoon",ex:"下午幾點有課？",exEn:"What time in the afternoon do you have class?"},
+      {n:12,zh:"上午",py:"shàngwǔ",pos:"MA",en:"morning (before noon)",ex:"上午你在做什麼？",exEn:"What are you doing this morning?"},
+      {n:13,zh:"鐘頭",py:"zhōngtóu",pos:"M",en:"hour (spoken)",ex:"兩個鐘頭",exEn:"two hours"},
+      {n:14,zh:"已經",py:"yǐjīng",pos:"A",en:"already",ex:"我已經買票了。",exEn:"I've already bought tickets."},
+      {n:15,zh:"差",py:"chà",pos:"V",en:"to lack, to be short of; (time) before",ex:"差十分四點",exEn:"ten minutes to four (3:50)"},
+      {n:16,zh:"那麼",py:"nàme",pos:"MA",en:"then, in that case",ex:"那麼，我等你。",exEn:"Then I'll wait for you."},
+      {n:17,zh:"起床",py:"qǐchuáng",pos:"VO",en:"to get up (out of bed)",ex:"你幾點起床？",exEn:"What time do you get up?"},
+      {n:18,zh:"一起",py:"yīqǐ",pos:"A",en:"together",ex:"我們一起去。",exEn:"Let's go together."},
+      {n:19,zh:"休息",py:"xiūxi",pos:"V",en:"to rest",ex:"我要休息一下。",exEn:"I need to rest a bit."},
+      {n:20,zh:"下班",py:"xià bān",pos:"VO",en:"to get off work",ex:"你幾點下班？",exEn:"When do you get off work?"},
+    ],
+    grammar:[
+      {title:"Telling time",exp:"Chinese time: 點 (hour) + 分 (minutes). 半 = 30 min, 一刻 = 15 min, 差 = minus.",patterns:[
+        {pat:"現在三點半。",en:"It's now 3:30.",ex:"四點一刻 = 4:15"},
+        {pat:"差十分四點",en:"Ten minutes to four (3:50)",ex:"差一刻三點 = 2:45"},
+      ]},
+      {title:"Time sequence with 就",exp:"就 connects two clauses to show the second action happens right after the first.",patterns:[
+        {pat:"V1 了，就 V2",en:"As soon as [V1], then [V2]",ex:"下了課，就去買票。Right after class, I'll buy tickets."},
+      ]},
+    ],
+    notes:["鐘頭 is the spoken form for 'hour'; 小時 is more formal. Both are used in Taiwan. 個鐘頭 takes the measure word 個."],
+  },
+  {
+    id:12, zh:"我到外國去了八個多月", en:"I Went Abroad for More Than Eight Months",
+    dialogues:[
+      {part:"I", speakers:["A","B"], lines:[
+        {s:0,zh:"好久不見，聽說你到歐洲去了。",py:"Hǎojiǔ bújiàn, tīngshuō nǐ dào Ōuzhōu qù le.",en:"Long time no see! I heard you went to Europe."},
+        {s:1,zh:"是啊，我到歐洲去了八個多月。",py:"Shì a, wǒ dào Ōuzhōu qù le bā gè duō yuè.",en:"Yes, I went to Europe for more than eight months."},
+        {s:0,zh:"你都到了哪些國家？",py:"Nǐ dōu dào le nèixiē guójiā?",en:"Which countries did you visit?"},
+        {s:1,zh:"我去了德國、英國，還有法國。",py:"Wǒ qù le Déguó, Yīngguó, hái yǒu Fǎguó.",en:"I went to Germany, Britain, and also France."},
+        {s:0,zh:"明年我也想到德國去旅行，什麼時候去最好？",py:"Míng nián wǒ yě xiǎng dào Déguó qù lǚxíng, shénme shíhòu qù zuì hǎo?",en:"Next year I also want to travel to Germany. When is the best time to go?"},
+        {s:1,zh:"我想從六月到十月天氣都不錯。冬天太冷了。",py:"Wǒ xiǎng cóng liù yuè dào shí yuè tiānqì dōu búcuò. Dōngtiān tài lěng le.",en:"I think the weather from June to October is quite good. Winter is too cold."},
+        {s:0,zh:"春天呢？",py:"Chūntiān ne?",en:"What about spring?"},
+        {s:1,zh:"春天有的地方常下雨。",py:"Chūntiān yǒude dìfāng cháng xià yǔ.",en:"In spring, some places often have rain."},
+        {s:0,zh:"那，我應該夏天去。",py:"Nà, wǒ yīnggāi xiàtiān qù.",en:"Then I should go in summer."},
+        {s:1,zh:"對啊，夏天去最好。",py:"Duì a, xiàtiān qù zuì hǎo.",en:"Yes, summer is the best time to go."},
+      ]},
+    ],
+    vocab:[
+      {n:1,zh:"歐洲",py:"Ōuzhōu",pos:"N",en:"Europe",ex:"我想去歐洲旅行。",exEn:"I want to travel in Europe."},
+      {n:2,zh:"月",py:"yuè",pos:"N/M",en:"month; moon",ex:"八個多月",exEn:"more than eight months"},
+      {n:3,zh:"國家",py:"guójiā",pos:"N",en:"country, nation",ex:"你去了哪些國家？",exEn:"Which countries did you visit?"},
+      {n:4,zh:"還有",py:"hái yǒu",pos:"MA",en:"also, additionally, and also",ex:"還有法國。",exEn:"And also France."},
+      {n:5,zh:"旅行",py:"lǚxíng",pos:"V/N",en:"to travel; travel, trip",ex:"我很喜歡旅行。",exEn:"I love traveling."},
+      {n:6,zh:"明年",py:"míng nián",pos:"MA",en:"next year",ex:"明年我想去日本。",exEn:"Next year I want to go to Japan."},
+      {n:7,zh:"什麼時候",py:"shénme shíhòu",pos:"QW",en:"when, what time",ex:"你什麼時候去？",exEn:"When are you going?"},
+      {n:8,zh:"春天",py:"chūntiān",pos:"N",en:"spring",ex:"春天天氣很好。",exEn:"The weather in spring is nice."},
+      {n:9,zh:"夏天",py:"xiàtiān",pos:"N",en:"summer",ex:"夏天很熱。",exEn:"Summer is very hot."},
+      {n:10,zh:"秋天",py:"qiūtiān",pos:"N",en:"autumn, fall",ex:"秋天不冷不熱。",exEn:"Autumn is neither hot nor cold."},
+      {n:11,zh:"冬天",py:"dōngtiān",pos:"N",en:"winter",ex:"冬天太冷了。",exEn:"Winter is too cold."},
+      {n:12,zh:"下雨",py:"xià yǔ",pos:"VO",en:"to rain",ex:"今天下雨了。",exEn:"It's raining today."},
+      {n:13,zh:"應該",py:"yīnggāi",pos:"AV",en:"should, ought to",ex:"你應該去。",exEn:"You should go."},
+      {n:14,zh:"去年",py:"qùnián",pos:"MA",en:"last year",ex:"我去年去了日本。",exEn:"Last year I went to Japan."},
+      {n:15,zh:"今年",py:"jīnnián",pos:"MA",en:"this year",ex:"今年我想去歐洲。",exEn:"This year I want to go to Europe."},
+      {n:16,zh:"星期",py:"xīngqī",pos:"N",en:"week; day of the week",ex:"這個星期你去哪裡？",exEn:"Where are you going this week?"},
+      {n:17,zh:"季節",py:"jìjié",pos:"N",en:"season",ex:"你最喜歡哪個季節？",exEn:"Which season do you like best?"},
+      {n:18,zh:"多",py:"duō",pos:"A/SV",en:"more than, over; many",ex:"八個多月",exEn:"more than eight months"},
+      {n:19,zh:"風景",py:"fēngjǐng",pos:"N",en:"scenery, landscape",ex:"那裡的風景很美。",exEn:"The scenery there is beautiful."},
+      {n:20,zh:"美",py:"měi",pos:"SV",en:"beautiful",ex:"風景很美。",exEn:"The scenery is beautiful."},
+    ],
+    grammar:[
+      {title:"Duration — how long an action lasted",exp:"Place the time duration after the verb to express how long something took.",patterns:[
+        {pat:"V 了 Duration",en:"V-ed for [duration]",ex:"我去了八個多月。I was away for over eight months."},
+        {pat:"NU-多-M",en:"more than [number] [measure word]",ex:"八個多月 (more than 8 months), 兩個多鐘頭"},
+      ]},
+      {title:"Seasons and months",exp:"Months: 一月 (January) through 十二月 (December). Seasons: 春夏秋冬天.",patterns:[
+        {pat:"從 M月 到 M月",en:"from month to month",ex:"從六月到十月天氣不錯。"},
+      ]},
+    ],
+    notes:["多 after a number+measure word means 'more than' or 'over': 八個多月 = more than eight months but less than nine.","一年有四個季節：春、夏、秋、冬。A year has four seasons: spring, summer, autumn, winter."],
+  },
+];
+
+// --- State ---
+let currentLesson = 0;
+let currentTab = 'home';
+let dialoguePart = 0;
+let displayModes = {zh:true,py:true,en:true};
+let vocabIdx = 0;
+let vocabFlipped = false;
+let vocabMode = 'card'; // 'card' or 'flash'
+let quiz = null;
+let quizIdx = 0;
+let quizScore = 0;
+let quizAns = null;
+let quizDone = false;
+let progress = JSON.parse(localStorage.getItem('pavc_progress')||'{}');
+
+function saveProgress(lid, key, val) {
+  if(!progress[lid]) progress[lid]={};
+  progress[lid][key]=val;
+  localStorage.setItem('pavc_progress', JSON.stringify(progress));
+}
+
+function getLessonProgress(lid) {
+  return progress[lid]||{};
+}
+
+// --- Shuffle ---
+function shuffle(a){return [...a].sort(()=>Math.random()-.5);}
+
+// --- Quiz ---
+function makeQuiz(vocab){
+  const qs = shuffle(vocab).slice(0,10);
+  return qs.map(item=>{
+    const wrong = shuffle(vocab.filter(v=>v.zh!==item.zh)).slice(0,3);
+    const opts = shuffle([item,...wrong]);
+    return {zh:item.zh,py:item.py,correct:item.en,options:opts.map(o=>o.en)};
+  });
+}
+
+// --- Render ---
+function renderSidebar(){
+  const s = document.getElementById('sidebar');
+  s.innerHTML = `
+    <div class="sidebar-header">
+      <h1>實用視聽華語</h1>
+      <p>Practical Audio-Visual Chinese 1</p>
+    </div>
+    <div class="lesson-list">
+      <button class="lesson-btn ${currentTab==='home'&&currentLesson===0?'active':''}" onclick="goHome()">
+        <span class="lesson-num">⌂</span>
+        <span class="lesson-info"><span class="lesson-zh">All Lessons</span></span>
+      </button>
+      ${LESSONS.map((l,i)=>{
+        const p = getLessonProgress(l.id);
+        const pct = p.quizBest ? Math.round(p.quizBest*10) : 0;
+        const col = pct>=80?'#2d6a4f':pct>=50?'#b5793a':'#e0d8cc';
+        return `<button class="lesson-btn ${currentLesson===l.id&&currentTab!=='home'?'active':''}" onclick="openLesson(${l.id})">
+          <span class="lesson-num">${l.id}</span>
+          <div class="lesson-info">
+            <div class="lesson-zh">${l.zh}</div>
+            <div class="lesson-en">${l.en}</div>
+            ${p.quizBest?`<div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%;background:${col}"></div></div>`:''}
+          </div>
+        </button>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderHeader(){
+  const h = document.getElementById('mainHeader');
+  if(currentTab==='home'||currentLesson===0){
+    h.innerHTML=`<div class="lesson-title-area" style="padding-bottom:16px"><h2 style="font-size:22px">新版實用視聽華語 · Book 1</h2><p class="en">12 Lessons · Taiwan Mandarin</p></div>`;
+    return;
+  }
+  const l = LESSONS.find(x=>x.id===currentLesson);
+  const tabs = ['dialogue','vocabulary','grammar','notes'];
+  h.innerHTML=`
+    <div class="lesson-title-area">
+      <div class="num">第${['一','二','三','四','五','六','七','八','九','十','十一','十二'][l.id-1]}課</div>
+      <h2>${l.zh}</h2>
+      <p class="en">${l.en}</p>
+    </div>
+    <div class="tabs">
+      ${tabs.map(t=>`<button class="tab ${currentTab===t?'active':''}" onclick="setTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+      <button class="tab ${currentTab==='quiz'?'active':''}" onclick="startQuiz()">Quiz</button>
+    </div>`;
+}
+
+function renderBody(){
+  const b = document.getElementById('mainBody');
+  if(currentTab==='home'||currentLesson===0){ renderHome(b); return; }
+  const l = LESSONS.find(x=>x.id===currentLesson);
+  if(currentTab==='dialogue') renderDialogue(b,l);
+  else if(currentTab==='vocabulary') renderVocab(b,l);
+  else if(currentTab==='grammar') renderGrammar(b,l);
+  else if(currentTab==='notes') renderNotes(b,l);
+  else if(currentTab==='quiz') renderQuiz(b,l);
+}
+
+function renderHome(b){
+  b.innerHTML=`
+    <p class="section-title">Select a lesson to begin</p>
+    <div class="home-grid">
+      ${LESSONS.map(l=>{
+        const p=getLessonProgress(l.id);
+        const pct=p.quizBest?Math.round(p.quizBest*10):0;
+        return `<div class="home-card" onclick="openLesson(${l.id})">
+          <div class="hc-num">第${['一','二','三','四','五','六','七','八','九','十','十一','十二'][l.id-1]}課</div>
+          <div class="hc-zh">${l.zh}</div>
+          <div class="hc-en">${l.en}</div>
+          ${pct?`<div class="hc-bar"><div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:3px">Quiz: ${p.quizBest}/10</div></div>`:'<div style="font-size:10px;color:var(--muted);margin-top:8px">Not started</div>'}
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderDialogue(b,l){
+  const d = l.dialogues[dialoguePart]||l.dialogues[0];
+  const partBtns = l.dialogues.length>1 ? `<div class="dialogue-part-tabs">
+    ${l.dialogues.map((dl,i)=>`<button class="part-btn ${dialoguePart===i?'active':''}" onclick="setDialoguePart(${i})">Part ${dl.part}</button>`).join('')}
+  </div>` : '';
+  const modeBar = `<div class="display-bar">
+    <span>Show:</span>
+    <button class="toggle-btn ${displayModes.zh?'on':''}" onclick="toggleMode('zh')">Characters</button>
+    <button class="toggle-btn ${displayModes.py?'on':''}" onclick="toggleMode('py')">Pinyin</button>
+    <button class="toggle-btn ${displayModes.en?'on':''}" onclick="toggleMode('en')">English</button>
+  </div>`;
+  const lines = d.lines.map((line,i)=>{
+    const cls = line.s===0?'speaker-a':'speaker-b';
+    const spk = d.speakers[line.s]||`Speaker ${line.s+1}`;
+    return `<div class="dialogue-line ${cls}">
+      <div class="speaker-col">
+        <div class="speaker-zh">${spk.split('(')[0].trim()}</div>
+        <div class="speaker-en">${spk.includes('(')?spk.match(/\(([^)]+)\)/)?.[1]||'':''}</div>
+      </div>
+      <div class="line-content">
+        ${displayModes.zh?`<div class="line-zh">${line.zh}</div>`:''}
+        ${displayModes.py?`<div class="line-py">${line.py}</div>`:''}
+        ${displayModes.en?`<div class="line-en">${line.en}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  b.innerHTML = partBtns + modeBar + lines +
+    `<p style="font-size:12px;color:var(--muted);margin-top:16px;text-align:center">🎧 Audio: PAVC1_${String(l.id).padStart(2,'0')}.mp3 · Per-line audio available after splitting</p>`;
+}
+
+function renderVocab(b,l){
+  const v = l.vocab[vocabIdx];
+  const flash = `<div class="flashcard-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:13px;color:var(--muted)">${vocabIdx+1} / ${l.vocab.length} words</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" onclick="setVocabMode('card')">Grid</button>
+        <button class="btn" onclick="startQuiz()">Quiz ↗</button>
+      </div>
+    </div>
+    <div class="flashcard" onclick="flipCard()">
+      ${!vocabFlipped?`
+        <div class="fc-zh">${v.zh}</div>
+        <div class="hint">tap to reveal</div>
+      `:`
+        <div class="fc-zh">${v.zh}</div>
+        <div class="fc-py">${v.py}</div>
+        <span class="fc-pos">${v.pos}</span>
+        <div class="fc-en">${v.en}</div>
+        ${v.ex?`<div class="fc-ex"><div style="font-size:17px;margin-bottom:3px">${v.ex}</div><div style="font-size:12px;color:var(--muted);font-style:italic">${v.exEn}</div></div>`:''}
+      `}
+    </div>
+    <div class="fc-nav">
+      <button class="fc-nav-btn" onclick="prevCard()" ${vocabIdx===0?'disabled':''}>← Prev</button>
+      <span class="fc-counter">${vocabIdx+1} / ${l.vocab.length}</span>
+      <button class="fc-nav-btn" onclick="nextCard()" ${vocabIdx===l.vocab.length-1?'disabled':''}>Next →</button>
+    </div>
+  </div>`;
+
+  const grid = `<div style="margin-top:24px">
+    <p class="section-title" style="margin-bottom:12px">All ${l.vocab.length} Words — Click to Expand</p>
+    <div class="vocab-grid">
+      ${l.vocab.map((v,i)=>{
+        const open = vocabIdx===i&&vocabFlipped;
+        return `<div class="vocab-card ${open?'flipped':''}" onclick="selectVocab(${i})">
+          <div class="v-num">${v.n}</div>
+          <div class="v-zh">${v.zh}</div>
+          <div class="v-py">${v.py}</div>
+          <span class="v-pos">${v.pos}</span>
+          <div class="v-en">${v.en}</div>
+          ${open&&v.ex?`<div class="v-ex">${v.ex}<br><span style="font-style:italic;color:var(--muted)">${v.exEn}</span></div>`:''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  b.innerHTML = flash + grid;
+}
+
+function renderGrammar(b,l){
+  b.innerHTML = l.grammar.map(g=>`
+    <div class="grammar-section">
+      <h3>${g.title}</h3>
+      <p>${g.exp}</p>
+      ${g.patterns.map(p=>`<div class="grammar-pattern">
+        <div class="pat">${p.pat}</div>
+        <div class="pat-en">${p.en}</div>
+        ${p.ex?`<div class="pat-ex">e.g. ${p.ex}</div>`:''}
+      </div>`).join('')}
+    </div>
+  `).join('');
+}
+
+function renderNotes(b,l){
+  b.innerHTML = `<p class="section-title">Notes</p>` +
+    l.notes.map(n=>`<div class="note-box">${n}</div>`).join('');
+}
+
+function renderQuiz(b,l){
+  if(!quiz){
+    b.innerHTML=`<div style="text-align:center;padding:40px 20px">
+      <div style="font-size:48px;margin-bottom:16px">📝</div>
+      <p style="font-size:16px;margin-bottom:8px;font-weight:600">Vocabulary Quiz — Lesson ${l.id}</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:24px">${l.vocab.length} words · 10 questions</p>
+      <button class="btn" onclick="initQuiz()">Start Quiz</button>
+    </div>`;
+    return;
+  }
+  if(quizDone){
+    const pct=quizScore*10;
+    const emoji=quizScore>=9?'🎉':quizScore>=7?'👍':quizScore>=5?'📖':'🔄';
+    saveProgress(l.id,'quizBest',Math.max(quizScore,(getLessonProgress(l.id).quizBest||0)));
+    renderSidebar();
+    b.innerHTML=`<div class="quiz-done">
+      <div class="emoji">${emoji}</div>
+      <div class="score-big">${quizScore} / 10</div>
+      <div class="score-label">${pct}% · ${quizScore>=9?'Excellent! 很棒！':quizScore>=7?'Good job! 不錯！':quizScore>=5?'Keep going! 繼續！':'Review and retry! 再試試！'}</div>
+      <button class="btn" onclick="initQuiz()" style="margin-right:8px">Try Again</button>
+      <button class="btn-ghost" onclick="setTab('vocabulary')">Review Vocab</button>
+    </div>`;
+    return;
+  }
+  const q = quiz[quizIdx];
+  b.innerHTML=`<div class="quiz-wrap">
+    <div class="quiz-meta">
+      <span>Question ${quizIdx+1} of ${quiz.length}</span>
+      <span class="quiz-score">✓ ${quizScore} correct</span>
+    </div>
+    <div class="quiz-q-card">
+      <div class="q-zh">${q.zh}</div>
+      <div class="q-py">${q.py}</div>
+    </div>
+    ${q.options.map(opt=>{
+      let cls='quiz-opt';
+      if(quizAns){
+        if(opt===q.correct) cls+=' correct';
+        else if(opt===quizAns&&opt!==q.correct) cls+=' wrong';
+      }
+      return `<button class="${cls}" onclick="answerQuiz('${opt.replace(/'/g,"\\'")}');return false;" ${quizAns?'disabled':''}>${opt}</button>`;
+    }).join('')}
+  </div>`;
+}
+
+function render(){
+  renderSidebar();
+  renderHeader();
+  renderBody();
+}
+
+// --- Actions ---
+function goHome(){ currentLesson=0; currentTab='home'; render(); }
+function openLesson(id){ currentLesson=id; currentTab='dialogue'; dialoguePart=0; vocabIdx=0; vocabFlipped=false; quiz=null; quizDone=false; render(); }
+function setTab(t){ currentTab=t; vocabMode='flash'; vocabIdx=0; vocabFlipped=false; render(); }
+function setDialoguePart(i){ dialoguePart=i; render(); }
+function toggleMode(m){ displayModes[m]=!displayModes[m]; renderBody(); }
+function flipCard(){ vocabFlipped=!vocabFlipped; renderBody(); }
+function prevCard(){ if(vocabIdx>0){vocabIdx--;vocabFlipped=false;renderBody();} }
+function nextCard(){ const l=LESSONS.find(x=>x.id===currentLesson); if(vocabIdx<l.vocab.length-1){vocabIdx++;vocabFlipped=false;renderBody();} }
+function selectVocab(i){ if(vocabIdx===i){vocabFlipped=!vocabFlipped;}else{vocabIdx=i;vocabFlipped=true;} renderBody(); }
+function setVocabMode(m){ vocabMode=m; renderBody(); }
+function startQuiz(){ currentTab='quiz'; initQuiz(); render(); }
+function initQuiz(){
+  const l=LESSONS.find(x=>x.id===currentLesson);
+  quiz=makeQuiz(l.vocab); quizIdx=0; quizScore=0; quizAns=null; quizDone=false;
+  renderBody();
+}
+function answerQuiz(ans){
+  if(quizAns) return;
+  const q=quiz[quizIdx];
+  quizAns=ans;
+  if(ans===q.correct) quizScore++;
+  renderBody();
+  setTimeout(()=>{
+    if(quizIdx+1>=quiz.length){quizDone=true;}
+    else{quizIdx++;quizAns=null;}
+    renderBody();
+  },900);
+}
+
+// Start
+render();
+</script>
+</body>
+</html>
