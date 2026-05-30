@@ -782,6 +782,351 @@ const LESSONS = [
   },
 ];
 
+// ============================================================
+// ZHUYIN LESSONS
+// ============================================================
+const ZHUYIN_LESSONS = [
+  {
+    id:'z1', title:'What is Zhuyin?', subtitle:'The Taiwan phonetic system',
+    icon:'ㄅ',
+    sections:[
+      {type:'intro', content:`
+        <p>Zhuyin (注音符號), also called Bopomofo, is the phonetic system used in Taiwan to represent Mandarin sounds. Unlike Pinyin (which uses Latin letters), Zhuyin uses its own unique symbols.</p>
+        <p>Every Mandarin syllable has up to 3 parts:</p>
+      `},
+      {type:'table', rows:[
+        ['Part','Name','Example','Meaning'],
+        ['Initial (聲母)','Beginning consonant','ㄇ','like "m"'],
+        ['Final (韻母)','Vowel or vowel combo','ㄚ','like "a"'],
+        ['Tone (聲調)','Pitch mark','ˇ','3rd tone (dip)'],
+      ]},
+      {type:'note', content:'ㄇ + ㄚ + ˇ = ㄇㄚˇ = mǎ (馬) · Think of it like LEGO blocks for pronunciation.'},
+      {type:'intro', content:`<p>Zhuyin is used in Taiwan for:</p>`},
+      {type:'list', items:[
+        'Elementary school education — children learn Zhuyin before characters',
+        'Taiwanese keyboards — Zhuyin input method is default',
+        'Dictionaries — Zhuyin annotations appear above or beside characters',
+        'Children\'s books — Zhuyin printed next to every character',
+      ]},
+    ],
+    drill:null,
+  },
+  {
+    id:'z2', title:'The 21 Initials', subtitle:'Consonants (聲母)',
+    icon:'ㄆ',
+    sections:[
+      {type:'intro', content:'<p>There are 21 initials (consonants) in Zhuyin. They are the <strong>beginning</strong> of a syllable. Some syllables have no initial at all.</p>'},
+      {type:'symbol-group', label:'Labials — lips', color:'#f5edd9', symbols:[
+        {z:'ㄅ',py:'b',hint:'like English "b" but unaspirated'},
+        {z:'ㄆ',py:'p',hint:'like English "p" with puff of air'},
+        {z:'ㄇ',py:'m',hint:'like English "m"'},
+        {z:'ㄈ',py:'f',hint:'like English "f"'},
+      ]},
+      {type:'symbol-group', label:'Dentals — tongue tip', color:'#d6eaf8', symbols:[
+        {z:'ㄉ',py:'d',hint:'like English "d" but unaspirated'},
+        {z:'ㄊ',py:'t',hint:'like English "t" with puff of air'},
+        {z:'ㄋ',py:'n',hint:'like English "n"'},
+        {z:'ㄌ',py:'l',hint:'like English "l"'},
+      ]},
+      {type:'symbol-group', label:'Velars — back of throat', color:'#d8f3e3', symbols:[
+        {z:'ㄍ',py:'g',hint:'like English "g" but unaspirated'},
+        {z:'ㄎ',py:'k',hint:'like English "k" with puff of air'},
+        {z:'ㄏ',py:'h',hint:'like English "h"'},
+      ]},
+      {type:'symbol-group', label:'Palatals — mid tongue', color:'#fde8e6', symbols:[
+        {z:'ㄐ',py:'j',hint:'like "j" in "jeep" — only before ㄧ/ㄩ'},
+        {z:'ㄑ',py:'q',hint:'like "ch" in "cheese" — only before ㄧ/ㄩ'},
+        {z:'ㄒ',py:'x',hint:'like "sh" but forward — only before ㄧ/ㄩ'},
+      ]},
+      {type:'symbol-group', label:'Retroflexes — curled tongue', color:'#f0e6ff', symbols:[
+        {z:'ㄓ',py:'zh',hint:'curl tongue back, like "j" in "judge"'},
+        {z:'ㄔ',py:'ch',hint:'curl tongue back, like "ch" in "church"'},
+        {z:'ㄕ',py:'sh',hint:'curl tongue back, like "sh" in "shoe"'},
+        {z:'ㄖ',py:'r', hint:'curl tongue back, like "r" in "run"'},
+      ]},
+      {type:'symbol-group', label:'Sibilants — flat tongue', color:'#fff8dc', symbols:[
+        {z:'ㄗ',py:'z',hint:'like "ds" in "reads" — flat tongue'},
+        {z:'ㄘ',py:'c',hint:'like "ts" in "cats" — flat tongue'},
+        {z:'ㄙ',py:'s',hint:'like English "s" — flat tongue'},
+      ]},
+    ],
+    drill:{
+      type:'symbol-match',
+      prompt:'What sound does this make?',
+      items:[
+        {z:'ㄅ',correct:'b',options:['b','p','m','f']},
+        {z:'ㄆ',correct:'p',options:['b','p','d','t']},
+        {z:'ㄇ',correct:'m',options:['m','n','l','f']},
+        {z:'ㄈ',correct:'f',options:['f','h','v','b']},
+        {z:'ㄉ',correct:'d',options:['d','t','n','g']},
+        {z:'ㄊ',correct:'t',options:['t','d','k','p']},
+        {z:'ㄋ',correct:'n',options:['n','m','l','r']},
+        {z:'ㄌ',correct:'l',options:['l','n','r','d']},
+        {z:'ㄍ',correct:'g',options:['g','k','h','d']},
+        {z:'ㄎ',correct:'k',options:['k','g','h','t']},
+        {z:'ㄏ',correct:'h',options:['h','f','g','k']},
+        {z:'ㄐ',correct:'j',options:['j','q','x','zh']},
+        {z:'ㄑ',correct:'q',options:['q','j','x','ch']},
+        {z:'ㄒ',correct:'x',options:['x','q','sh','s']},
+        {z:'ㄓ',correct:'zh',options:['zh','ch','sh','z']},
+        {z:'ㄔ',correct:'ch',options:['ch','zh','sh','c']},
+        {z:'ㄕ',correct:'sh',options:['sh','zh','ch','x']},
+        {z:'ㄖ',correct:'r', options:['r','l','zh','sh']},
+        {z:'ㄗ',correct:'z', options:['z','c','s','zh']},
+        {z:'ㄘ',correct:'c', options:['c','z','s','ch']},
+        {z:'ㄙ',correct:'s', options:['s','c','z','sh']},
+      ]
+    }
+  },
+  {
+    id:'z3', title:'The Finals', subtitle:'Vowels & vowel combos (韻母)',
+    icon:'ㄚ',
+    sections:[
+      {type:'intro', content:'<p>Finals are the <strong>vowel core</strong> of a syllable. There are 16 finals. Some are simple vowels; others are compound sounds.</p>'},
+      {type:'symbol-group', label:'Simple vowels', color:'#f5edd9', symbols:[
+        {z:'ㄚ',py:'a', hint:'"ah" — open mouth wide'},
+        {z:'ㄛ',py:'o', hint:'"aw" — round lips'},
+        {z:'ㄜ',py:'e', hint:'"uh" — mid vowel, not "eh"'},
+        {z:'ㄝ',py:'ê', hint:'"eh" — rare standalone'},
+        {z:'ㄧ',py:'i', hint:'"ee" — high front vowel'},
+        {z:'ㄨ',py:'u', hint:'"oo" — round lips'},
+        {z:'ㄩ',py:'ü', hint:'"ü" — like French "u", lips rounded + say "ee"'},
+      ]},
+      {type:'symbol-group', label:'Compound finals', color:'#d6eaf8', symbols:[
+        {z:'ㄞ',py:'ai', hint:'"eye"'},
+        {z:'ㄟ',py:'ei', hint:'"ay" in "hey"'},
+        {z:'ㄠ',py:'ao', hint:'"ow" in "cow"'},
+        {z:'ㄡ',py:'ou', hint:'"oh" in "go"'},
+        {z:'ㄢ',py:'an', hint:'"an" — ends with nasal n'},
+        {z:'ㄣ',py:'en', hint:'"un" — like "fun" without f'},
+        {z:'ㄤ',py:'ang',hint:'"ahng" — back nasal'},
+        {z:'ㄥ',py:'eng',hint:'"ung" — like "lung"'},
+        {z:'ㄦ',py:'er', hint:'"er" — retroflex, only standalone'},
+      ]},
+      {type:'note', content:'ㄧ, ㄨ, ㄩ are both finals AND medials — they can start a syllable alone or combine with initials.'},
+    ],
+    drill:{
+      type:'symbol-match',
+      prompt:'What sound does this final make?',
+      items:[
+        {z:'ㄚ',correct:'a',  options:['a','o','e','i']},
+        {z:'ㄛ',correct:'o',  options:['o','a','u','e']},
+        {z:'ㄜ',correct:'e',  options:['e','o','a','ê']},
+        {z:'ㄧ',correct:'i',  options:['i','u','ü','e']},
+        {z:'ㄨ',correct:'u',  options:['u','i','o','ü']},
+        {z:'ㄩ',correct:'ü',  options:['ü','u','i','e']},
+        {z:'ㄞ',correct:'ai', options:['ai','ei','ao','ou']},
+        {z:'ㄟ',correct:'ei', options:['ei','ai','ou','ao']},
+        {z:'ㄠ',correct:'ao', options:['ao','ou','ai','an']},
+        {z:'ㄡ',correct:'ou', options:['ou','ao','ei','en']},
+        {z:'ㄢ',correct:'an', options:['an','en','ang','eng']},
+        {z:'ㄣ',correct:'en', options:['en','an','eng','ang']},
+        {z:'ㄤ',correct:'ang',options:['ang','eng','an','en']},
+        {z:'ㄥ',correct:'eng',options:['eng','ang','en','an']},
+        {z:'ㄦ',correct:'er', options:['er','e','ai','ou']},
+      ]
+    }
+  },
+  {
+    id:'z4', title:'The Four Tones', subtitle:'Pitch matters! (聲調)',
+    icon:'ˇ',
+    sections:[
+      {type:'intro', content:'<p>Mandarin is a tonal language — the same syllable with a different pitch means a completely different word. There are 4 tones plus a neutral tone.</p>'},
+      {type:'table', rows:[
+        ['Tone','Mark','Zhuyin','Description','Example'],
+        ['1st','ˉ','（no mark written）','High and flat — hold it steady','媽 mā (mother)'],
+        ['2nd','ˊ','ˊ after symbol','Rising — go up like a question','麻 má (hemp)'],
+        ['3rd','ˇ','ˇ after symbol','Dip then rise — goes down then up','馬 mǎ (horse)'],
+        ['4th','ˋ','ˋ after symbol','Sharp fall — go down quickly','罵 mà (to scold)'],
+        ['Neutral','·','· or no mark','Light, short, unstressed','嗎 ma (question particle)'],
+      ]},
+      {type:'note', content:'In written Zhuyin, the 1st tone has NO tone mark. The mark is only written for tones 2, 3, 4, and neutral.'},
+      {type:'symbol-group', label:'The same syllable — 4 different words', color:'#f5edd9', symbols:[
+        {z:'媽',py:'ㄇㄚ (1st)',hint:'mother — high flat'},
+        {z:'麻',py:'ㄇㄚˊ (2nd)',hint:'hemp — rising'},
+        {z:'馬',py:'ㄇㄚˇ (3rd)',hint:'horse — dip'},
+        {z:'罵',py:'ㄇㄚˋ (4th)',hint:'to scold — falling'},
+      ]},
+      {type:'intro', content:'<p><strong>Tone change rules to know:</strong></p>'},
+      {type:'list', items:[
+        '3rd + 3rd → the first becomes 2nd tone: 你好 nǐhǎo → sounds like níhǎo',
+        '不 (bù) before 4th tone becomes 2nd: 不是 bùshì → sounds like búshì',
+        '一 (yī) changes based on what follows it',
+        'Neutral tone syllables are short and light — don\'t stress them',
+      ]},
+    ],
+    drill:{
+      type:'tone-match',
+      prompt:'Which tone mark matches this description?',
+      items:[
+        {desc:'High and flat — hold it steady',correct:'ˉ (1st tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'Rising — go up like a question',correct:'ˊ (2nd tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'Dip then rise — goes down then back up',correct:'ˇ (3rd tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'Sharp fall — drop down quickly',correct:'ˋ (4th tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'Light and short — unstressed',correct:'· (neutral)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˋ (4th tone)','· (neutral)']},
+        {desc:'媽 (mother) uses this tone',correct:'ˉ (1st tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'馬 (horse) uses this tone',correct:'ˇ (3rd tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+        {desc:'罵 (to scold) uses this tone',correct:'ˋ (4th tone)',options:['ˉ (1st tone)','ˊ (2nd tone)','ˇ (3rd tone)','ˋ (4th tone)']},
+      ]
+    }
+  },
+  {
+    id:'z5', title:'Building Syllables', subtitle:'Initial + Final + Tone',
+    icon:'ㄇㄚ',
+    sections:[
+      {type:'intro', content:'<p>Now combine everything. Every Mandarin syllable follows this pattern:</p>'},
+      {type:'table', rows:[
+        ['Initial','Final','Tone','Result','Meaning'],
+        ['ㄅ','ㄚ','(1st)','ㄅㄚ bā','eight (八)'],
+        ['ㄇ','ㄚ','ˇ','ㄇㄚˇ mǎ','horse (馬)'],
+        ['ㄉ','ㄚ','ˋ','ㄉㄚˋ dà','big (大)'],
+        ['ㄊ','ㄚ','ˉ','ㄊㄚ tā','he/she (他)'],
+        ['ㄋ','ㄧ','ˇ','ㄋㄧˇ nǐ','you (你)'],
+        ['ㄏ','ㄠ','ˇ','ㄏㄠˇ hǎo','good (好)'],
+        ['ㄒ','ㄧㄝ','ˋ','ㄒㄧㄝˋ xiè','thank (謝)'],
+        ['ㄊ','ㄞ','ˊ','ㄊㄞˊ tái','platform (台)'],
+      ]},
+      {type:'note', content:'Some syllables have NO initial — the final stands alone. Example: ㄚ (a), ㄧ (yī), ㄨ (wú). When ㄧ, ㄨ, ㄩ start a syllable alone, they are written with medial glide rules.'},
+      {type:'symbol-group', label:'Read these real words', color:'#d8f3e3', symbols:[
+        {z:'你好',py:'ㄋㄧˇ ㄏㄠˇ',hint:'nǐ hǎo — Hello'},
+        {z:'謝謝',py:'ㄒㄧㄝˋ ㄒㄧㄝˋ',hint:'xièxiè — Thank you'},
+        {z:'台灣',py:'ㄊㄞˊ ㄨㄢ',hint:'Táiwān — Taiwan'},
+        {z:'再見',py:'ㄗㄞˋ ㄐㄧㄢˋ',hint:'zàijiàn — Goodbye'},
+        {z:'老師',py:'ㄌㄠˇ ㄕ',hint:'lǎoshī — Teacher'},
+        {z:'學生',py:'ㄒㄩㄝˊ ㄕㄥ',hint:'xuéshēng — Student'},
+      ]},
+    ],
+    drill:{
+      type:'symbol-match',
+      prompt:'What word/phrase does this Zhuyin represent?',
+      items:[
+        {z:'ㄋㄧˇ ㄏㄠˇ',correct:'Hello (你好)',options:['Hello (你好)','Goodbye (再見)','Thank you (謝謝)','Taiwan (台灣)']},
+        {z:'ㄒㄧㄝˋ ㄒㄧㄝˋ',correct:'Thank you (謝謝)',options:['Thank you (謝謝)','Hello (你好)','Sorry (對不起)','Please (請)']},
+        {z:'ㄊㄞˊ ㄨㄢ',correct:'Taiwan (台灣)',options:['Taiwan (台灣)','Japan (日本)','America (美國)','China (中國)']},
+        {z:'ㄗㄞˋ ㄐㄧㄢˋ',correct:'Goodbye (再見)',options:['Goodbye (再見)','Hello (你好)','Thank you (謝謝)','Good morning (早)']},
+        {z:'ㄌㄠˇ ㄕ',correct:'Teacher (老師)',options:['Teacher (老師)','Student (學生)','Friend (朋友)','Doctor (醫生)']},
+        {z:'ㄅㄚ',correct:'Eight (八)',options:['Eight (八)','Horse (馬)','Big (大)','He/She (他)']},
+        {z:'ㄇㄚˇ',correct:'Horse (馬)',options:['Horse (馬)','Mother (媽)','Hemp (麻)','Scold (罵)']},
+        {z:'ㄉㄚˋ',correct:'Big (大)',options:['Big (大)','Small (小)','Good (好)','Bad (壞)']},
+      ]
+    }
+  },
+  {
+    id:'z6', title:'Zhuyin on the Keyboard', subtitle:'Taiwan input method (注音輸入法)',
+    icon:'⌨',
+    sections:[
+      {type:'intro', content:'<p>In Taiwan, the default Mandarin input method uses Zhuyin. Each key on the keyboard maps to one Zhuyin symbol. You type: <strong>Initial → Final → Tone number</strong>, then press Enter or Space to confirm.</p>'},
+      {type:'table', rows:[
+        ['Key','Symbol','Key','Symbol','Key','Symbol','Key','Symbol'],
+        ['1','ㄅ','q','ㄆ','a','ㄇ','z','ㄈ'],
+        ['2','ㄉ','w','ㄊ','s','ㄋ','x','ㄌ'],
+        ['e','ㄍ','d','ㄎ','c','ㄏ','',''],
+        ['r','ㄐ','f','ㄑ','v','ㄒ','',''],
+        ['5','ㄓ','t','ㄔ','g','ㄕ','b','ㄖ'],
+        ['y','ㄗ','h','ㄘ','n','ㄙ','',''],
+        ['u','ㄧ','j','ㄨ','m','ㄩ','',''],
+        ['8','ㄚ','i','ㄛ','k','ㄜ','，','ㄝ'],
+        ['9','ㄞ','o','ㄟ','l','ㄠ','。','ㄡ'],
+        ['0','ㄢ','p','ㄣ',';','ㄤ','/','ㄥ'],
+        ['-','ㄦ','','','','','',''],
+      ]},
+      {type:'note', content:'Tone keys: 1=1st tone, 3=2nd tone (ˊ), 4=3rd tone (ˇ), 6=4th tone (ˋ), 7=5th/neutral. The 1st tone is often entered with Space.'},
+      {type:'intro', content:'<p><strong>How to type 你好 (nǐ hǎo):</strong></p>'},
+      {type:'list', items:[
+        'ㄋ = s key',
+        'ㄧ = u key',
+        'ˇ (3rd tone) = 4 key → press Enter → 你 appears',
+        'ㄏ = c key',
+        'ㄠ = l key',
+        'ˇ (3rd tone) = 4 key → press Enter → 好 appears',
+      ]},
+      {type:'intro', content:'<p><strong>Typing practice words (copy into a Zhuyin-enabled input):</strong></p>'},
+      {type:'symbol-group', label:'Try typing these', color:'#f5edd9', symbols:[
+        {z:'你好',py:'s u 4 · c l 4',hint:'nǐ hǎo — Hello'},
+        {z:'謝謝',py:'v j 6 · v j 6',hint:'xièxiè — Thank you'},
+        {z:'台灣',py:'w u j 3 · j 0 1',hint:'Táiwān — Taiwan'},
+        {z:'我',py:'a e 4',hint:'wǒ — I, me'},
+        {z:'是',py:'g 4',hint:'shì — to be'},
+      ]},
+    ],
+    drill:{
+      type:'symbol-match',
+      prompt:'Which key types this Zhuyin symbol?',
+      items:[
+        {z:'ㄅ',correct:'1',options:['1','q','a','z']},
+        {z:'ㄆ',correct:'q',options:['q','1','w','a']},
+        {z:'ㄇ',correct:'a',options:['a','q','z','s']},
+        {z:'ㄉ',correct:'2',options:['2','w','s','e']},
+        {z:'ㄊ',correct:'w',options:['w','2','e','s']},
+        {z:'ㄧ',correct:'u',options:['u','j','m','i']},
+        {z:'ㄨ',correct:'j',options:['j','u','m','n']},
+        {z:'ㄩ',correct:'m',options:['m','u','j','n']},
+        {z:'ㄚ',correct:'8',options:['8','9','0','i']},
+        {z:'ㄞ',correct:'9',options:['9','8','0','o']},
+        {z:'ㄠ',correct:'l',options:['l','o','k','p']},
+        {z:'ㄢ',correct:'0',options:['0','p',';','9']},
+      ]
+    }
+  },
+  {
+    id:'z7', title:'Reading Real Zhuyin', subtitle:'PAVC Book 1 vocabulary in Zhuyin',
+    icon:'ㄒㄩㄝ',
+    sections:[
+      {type:'intro', content:'<p>Now read actual Zhuyin from the textbook. These are Lesson 1–3 vocabulary words annotated in Zhuyin — exactly as they appear in Taiwanese dictionaries and children\'s books.</p>'},
+      {type:'symbol-group', label:'Lesson 1 — Greetings', color:'#f5edd9', symbols:[
+        {z:'您',py:'ㄋㄧㄣˊ',hint:'nín — you (formal)'},
+        {z:'好',py:'ㄏㄠˇ',hint:'hǎo — good'},
+        {z:'姓',py:'ㄒㄧㄥˋ',hint:'xìng — surname'},
+        {z:'叫',py:'ㄐㄧㄠˋ',hint:'jiào — to be called'},
+        {z:'是',py:'ㄕˋ',hint:'shì — to be'},
+        {z:'不是',py:'ㄅㄨˊ ㄕˋ',hint:'búshì — is not'},
+      ]},
+      {type:'symbol-group', label:'Lesson 2 — Greetings & weather', color:'#d6eaf8', symbols:[
+        {z:'早',py:'ㄗㄠˇ',hint:'zǎo — good morning / early'},
+        {z:'謝謝',py:'ㄒㄧㄝˋ ㄒㄧㄝˋ',hint:'xièxiè — thank you'},
+        {z:'也',py:'ㄧㄝˇ',hint:'yě — also'},
+        {z:'忙',py:'ㄇㄤˊ',hint:'máng — busy'},
+        {z:'熱',py:'ㄖㄜˋ',hint:'rè — hot'},
+        {z:'再見',py:'ㄗㄞˋ ㄐㄧㄢˋ',hint:'zàijiàn — goodbye'},
+      ]},
+      {type:'symbol-group', label:'Lesson 3 — Likes & things', color:'#d8f3e3', symbols:[
+        {z:'喜歡',py:'ㄒㄧˇ ㄏㄨㄢ',hint:'xǐhuān — to like'},
+        {z:'看',py:'ㄎㄢˋ',hint:'kàn — to watch/read'},
+        {z:'電影',py:'ㄉㄧㄢˋ ㄧㄥˇ',hint:'diànyǐng — movie'},
+        {z:'都',py:'ㄉㄡ',hint:'dōu — all, both'},
+        {z:'買',py:'ㄇㄞˇ',hint:'mǎi — to buy'},
+        {z:'貴',py:'ㄍㄨㄟˋ',hint:'guì — expensive'},
+      ]},
+      {type:'note', content:'Tip: In Taiwanese textbooks and dictionaries, Zhuyin appears in small print to the right of (vertical text) or above (horizontal text) each character.'},
+    ],
+    drill:{
+      type:'symbol-match',
+      prompt:'What does this Zhuyin spell?',
+      items:[
+        {z:'ㄋㄧˇ',correct:'nǐ (you)',options:['nǐ (you)','nín (you formal)','nǐmen (you plural)','nèi (that)']},
+        {z:'ㄏㄠˇ',correct:'hǎo (good)',options:['hǎo (good)','hào (hobby)','háo (fine hair)','hāo (wormwood)']},
+        {z:'ㄕˋ',correct:'shì (to be)',options:['shì (to be)','shí (ten)','shǐ (history)','shī (teacher)']},
+        {z:'ㄗㄠˇ',correct:'zǎo (early)',options:['zǎo (early)','zào (make)','záo (chisel)','zāo (encounter)']},
+        {z:'ㄇㄤˊ',correct:'máng (busy)',options:['máng (busy)','mǎng (reckless)','mān (slow)','mān (full)']},
+        {z:'ㄎㄢˋ',correct:'kàn (to watch)',options:['kàn (to watch)','kǎn (chop)','kān (publish)','kán (pit)']},
+        {z:'ㄉㄡ',correct:'dōu (all)',options:['dōu (all)','dǒu (shake)','dòu (bean)','dōu (pocket)']},
+        {z:'ㄇㄞˇ',correct:'mǎi (to buy)',options:['mǎi (to buy)','mài (to sell)','māi (bury)','mǎ (horse)']},
+      ]
+    }
+  },
+];
+
+// ============================================================
+// ZHUYIN STATE
+// ============================================================
+let currentZLesson = null;
+let zTab = 'learn'; // 'learn' | 'drill' | 'quiz'
+let zDrillIdx = 0;
+let zDrillAns = null;
+let zDrillScore = 0;
+let zDrillDone = false;
+let zSection = 'zhuyin'; // which sidebar section: 'pavc' | 'zhuyin'
+
 // --- State ---
 let currentLesson = 0;
 let currentTab = 'home';
@@ -829,7 +1174,7 @@ function renderSidebar(){
       <p>Practical Audio-Visual Chinese 1</p>
     </div>
     <div class="lesson-list">
-      <button class="lesson-btn ${currentTab==='home'&&currentLesson===0?'active':''}" onclick="goHome()">
+      <button class="lesson-btn ${zSection==='pavc'&&currentTab==='home'?'active':''}" onclick="goHome()">
         <span class="lesson-num">⌂</span>
         <span class="lesson-info"><span class="lesson-zh">All Lessons</span></span>
       </button>
@@ -837,7 +1182,7 @@ function renderSidebar(){
         const p = getLessonProgress(l.id);
         const pct = p.quizBest ? Math.round(p.quizBest*10) : 0;
         const col = pct>=80?'#2d6a4f':pct>=50?'#b5793a':'#e0d8cc';
-        return `<button class="lesson-btn ${currentLesson===l.id&&currentTab!=='home'?'active':''}" onclick="openLesson(${l.id})">
+        return `<button class="lesson-btn ${zSection==='pavc'&&currentLesson===l.id&&currentTab!=='home'?'active':''}" onclick="openLesson(${l.id})">
           <span class="lesson-num">${l.id}</span>
           <div class="lesson-info">
             <div class="lesson-zh">${l.zh}</div>
@@ -846,11 +1191,39 @@ function renderSidebar(){
           </div>
         </button>`;
       }).join('')}
+
+      <div style="padding:12px 16px 4px;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--accent-dark);text-transform:uppercase;border-top:1px solid var(--border);margin-top:8px">注音符號 · Zhuyin</div>
+      ${ZHUYIN_LESSONS.map(l=>{
+        const p = getLessonProgress('z_'+l.id);
+        const done = p.drillBest >= Math.round((l.drill?.items?.length||0)*0.7);
+        return `<button class="lesson-btn ${zSection==='zhuyin'&&currentZLesson===l.id?'active':''}" onclick="openZLesson('${l.id}')">
+          <span class="lesson-num" style="font-size:16px">${l.icon}</span>
+          <div class="lesson-info">
+            <div class="lesson-zh" style="font-size:13px">${l.title}</div>
+            <div class="lesson-en">${l.subtitle}</div>
+            ${done?'<div style="font-size:10px;color:var(--green);margin-top:2px">✓ Drilled</div>':''}
+          </div>
+        </button>`;
+      }).join('')}
     </div>`;
 }
 
 function renderHeader(){
   const h = document.getElementById('mainHeader');
+  if(zSection==='zhuyin' && currentZLesson){
+    const l = ZHUYIN_LESSONS.find(x=>x.id===currentZLesson);
+    h.innerHTML=`
+      <div class="lesson-title-area">
+        <div class="num" style="font-size:18px;letter-spacing:.02em">注音符號 · Zhuyin</div>
+        <h2>${l.title}</h2>
+        <p class="en">${l.subtitle}</p>
+      </div>
+      <div class="tabs">
+        <button class="tab ${zTab==='learn'?'active':''}" onclick="setZTab('learn')">Learn</button>
+        ${l.drill?`<button class="tab ${zTab==='drill'?'active':''}" onclick="setZTab('drill')">Drill</button>`:''}
+      </div>`;
+    return;
+  }
   if(currentTab==='home'||currentLesson===0){
     h.innerHTML=`<div class="lesson-title-area" style="padding-bottom:16px"><h2 style="font-size:22px">新版實用視聽華語 · Book 1</h2><p class="en">12 Lessons · Taiwan Mandarin</p></div>`;
     return;
@@ -871,6 +1244,12 @@ function renderHeader(){
 
 function renderBody(){
   const b = document.getElementById('mainBody');
+  if(zSection==='zhuyin' && currentZLesson){
+    const l = ZHUYIN_LESSONS.find(x=>x.id===currentZLesson);
+    if(zTab==='learn') renderZLearn(b,l);
+    else if(zTab==='drill') renderZDrill(b,l);
+    return;
+  }
   if(currentTab==='home'||currentLesson===0){ renderHome(b); return; }
   const l = LESSONS.find(x=>x.id===currentLesson);
   if(currentTab==='dialogue') renderDialogue(b,l);
@@ -1057,8 +1436,8 @@ function render(){
 }
 
 // --- Actions ---
-function goHome(){ currentLesson=0; currentTab='home'; render(); }
-function openLesson(id){ currentLesson=id; currentTab='dialogue'; dialoguePart=0; vocabIdx=0; vocabFlipped=false; vocabMode='flash'; quiz=null; quizDone=false; render(); }
+function goHome(){ zSection='pavc'; currentLesson=0; currentTab='home'; currentZLesson=null; render(); }
+function openLesson(id){ zSection='pavc'; currentLesson=id; currentTab='dialogue'; dialoguePart=0; vocabIdx=0; vocabFlipped=false; vocabMode='flash'; quiz=null; quizDone=false; render(); }
 function setTab(t){ currentTab=t; vocabMode='flash'; vocabIdx=0; vocabFlipped=false; render(); }
 function setDialoguePart(i){ dialoguePart=i; render(); }
 function toggleMode(m){ displayModes[m]=!displayModes[m]; renderBody(); }
@@ -1084,6 +1463,115 @@ function answerQuiz(ans){
     else{quizIdx++;quizAns=null;}
     renderBody();
   },900);
+}
+
+// ============================================================
+// ZHUYIN RENDER
+// ============================================================
+function renderZLearn(b, l){
+  const html = l.sections.map(s=>{
+    if(s.type==='intro') return `<div style="font-size:14px;line-height:1.8;color:var(--text);margin-bottom:14px">${s.content}</div>`;
+    if(s.type==='note') return `<div class="note-box" style="margin-bottom:14px;font-size:14px">💡 ${s.content}</div>`;
+    if(s.type==='list') return `<ul style="margin:0 0 14px 18px;font-size:14px;line-height:2">${s.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+    if(s.type==='table'){
+      const [head,...rows] = s.rows;
+      return `<div style="overflow-x:auto;margin-bottom:16px"><table style="border-collapse:collapse;width:100%;font-size:13px">
+        <thead><tr>${head.map(h=>`<th style="padding:8px 12px;text-align:left;background:var(--accent-light);border:1px solid var(--border);font-weight:600;color:var(--accent-dark)">${h}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map((r,ri)=>`<tr style="background:${ri%2===0?'var(--surface)':'var(--bg)'}">
+          ${r.map((c,ci)=>`<td style="padding:8px 12px;border:1px solid var(--border);${ci===0?'font-size:20px;font-family:\'BiauKai\',serif;':''}${s.rows[0].length===5&&ci===2?'font-size:18px;font-family:\'BiauKai\',serif;':''}${s.rows[0][0]==='Tone'&&ci===4?'font-family:\'BiauKai\',serif;':''}">${c}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+    if(s.type==='symbol-group') return `<div style="margin-bottom:18px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">${s.label}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${s.symbols.map(sym=>`<div style="background:${s.color};border:1px solid var(--border);border-radius:${getComputedStyle(document.documentElement).getPropertyValue('--radius')||'10px'};padding:10px 14px;min-width:90px;text-align:center">
+          <div style="font-size:28px;font-family:'BiauKai','DFKai-SB',serif;line-height:1.2;margin-bottom:4px">${sym.z}</div>
+          <div style="font-size:12px;font-family:'Noto Sans','Segoe UI',sans-serif;color:var(--accent-dark);font-weight:600;margin-bottom:2px">${sym.py}</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.4">${sym.hint}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+    return '';
+  }).join('');
+
+  b.innerHTML = html + (l.drill ? `
+    <div style="margin-top:24px;text-align:center">
+      <button class="btn" onclick="setZTab('drill')" style="padding:12px 32px;font-size:15px">Start Drill →</button>
+    </div>` : '');
+}
+
+function renderZDrill(b, l){
+  if(!l.drill){ b.innerHTML='<p>No drill for this lesson.</p>'; return; }
+  const items = l.drill.items;
+
+  if(zDrillDone){
+    const pct = Math.round(zDrillScore/items.length*100);
+    const emoji = pct>=90?'🎉':pct>=70?'👍':pct>=50?'📖':'🔄';
+    saveProgress('z_'+l.id,'drillBest',Math.max(zDrillScore,getLessonProgress('z_'+l.id).drillBest||0));
+    renderSidebar();
+    b.innerHTML=`<div class="quiz-done">
+      <div class="emoji">${emoji}</div>
+      <div class="score-big">${zDrillScore} / ${items.length}</div>
+      <div class="score-label">${pct}% · ${pct>=90?'Excellent! 很棒！':pct>=70?'Good! 不錯！':pct>=50?'Keep going!':'Review and retry!'}</div>
+      <button class="btn" onclick="restartZDrill()" style="margin-right:8px">Try Again</button>
+      <button class="btn-ghost" onclick="setZTab('learn')">← Back to Lesson</button>
+    </div>`;
+    return;
+  }
+
+  const q = items[zDrillIdx];
+  const opts = q.options || [q.correct,'—','—','—'];
+  const isDesc = l.drill.type==='tone-match'; // shows description instead of symbol
+
+  b.innerHTML=`<div class="quiz-wrap">
+    <div class="quiz-meta">
+      <span>${l.drill.prompt}</span>
+      <span class="quiz-score">✓ ${zDrillScore} / ${zDrillIdx} correct · Q${zDrillIdx+1}/${items.length}</span>
+    </div>
+    <div class="quiz-q-card" style="min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      ${isDesc
+        ? `<div style="font-size:17px;line-height:1.6;color:var(--text);text-align:center;padding:0 10px">${q.desc}</div>`
+        : `<div style="font-size:52px;font-family:'BiauKai','DFKai-SB',serif;line-height:1.2;margin-bottom:6px">${q.z}</div>`
+      }
+    </div>
+    ${opts.map(opt=>{
+      let cls='quiz-opt';
+      if(zDrillAns){
+        if(opt===q.correct) cls+=' correct';
+        else if(opt===zDrillAns&&opt!==q.correct) cls+=' wrong';
+      }
+      return `<button class="${cls}" onclick="answerZDrill('${opt.replace(/'/g,"\\'")}')" ${zDrillAns?'disabled':''}>${opt}</button>`;
+    }).join('')}
+  </div>`;
+}
+
+// ============================================================
+// ZHUYIN ACTIONS
+// ============================================================
+function openZLesson(id){
+  zSection='zhuyin'; currentZLesson=id; zTab='learn';
+  zDrillIdx=0; zDrillAns=null; zDrillScore=0; zDrillDone=false;
+  render();
+}
+function setZTab(t){
+  zTab=t;
+  if(t==='drill'){ zDrillIdx=0; zDrillAns=null; zDrillScore=0; zDrillDone=false; }
+  render();
+}
+function restartZDrill(){ zDrillIdx=0; zDrillAns=null; zDrillScore=0; zDrillDone=false; renderBody(); }
+function answerZDrill(ans){
+  if(zDrillAns) return;
+  const l = ZHUYIN_LESSONS.find(x=>x.id===currentZLesson);
+  const q = l.drill.items[zDrillIdx];
+  zDrillAns=ans;
+  if(ans===q.correct) zDrillScore++;
+  renderBody();
+  setTimeout(()=>{
+    if(zDrillIdx+1>=l.drill.items.length){ zDrillDone=true; }
+    else{ zDrillIdx++; zDrillAns=null; }
+    renderBody();
+  }, 900);
 }
 
 // Start
